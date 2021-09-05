@@ -1,0 +1,45 @@
+{
+    "name": "ecommit/doctrine-utils",
+    "description": "Doctrine utils.",
+    "keywords": ["doctrine", "paginator", "filters"],
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Hubert Lecorche",
+            "email": "contact@e-commit.fr"
+        }
+    ],
+    "autoload": {
+        "psr-4": { "Ecommit\\DoctrineUtils\\": "src/" }
+    },
+    "autoload-dev": {
+        "psr-4": { "Ecommit\\DoctrineUtils\\Tests\\": "tests/" }
+    },
+    "require": {
+        "php": "^7.3|^8.0",
+        "doctrine/dbal": "^2.11.0",
+        "ecommit/paginator": "1.0.x-dev",
+        "symfony/options-resolver": "^4.4|^5.3"
+    },
+    "require-dev": {
+        "symfony/cache": "*",
+        "doctrine/orm": "*",
+        "friendsofphp/php-cs-fixer": "^2.17.1",
+        "phpunit/phpunit": "^8.4"
+    },
+    "suggest": {
+        "doctrine/orm": "Doctrine ORM"
+    },
+    "conflict": {
+        "doctrine/orm": "<2.4.8 || >=3.0.0"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
+    }
+}
