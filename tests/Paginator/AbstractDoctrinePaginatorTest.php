@@ -115,9 +115,9 @@ abstract class AbstractDoctrinePaginatorTest extends AbstractTest
             [1, 5, null, 52],
             [3, 5, null, 52],
             [1, 100, null, 52],
-            [1, 5, $queryBuilderUpdaterNoData, 0], //No data
-            ['page', 5, null, 52], //Bad page
-            [1000, 5, null, 52], //Page too high
+            [1, 5, $queryBuilderUpdaterNoData, 0], // No data
+            ['page', 5, null, 52], // Bad page
+            [1000, 5, null, 52], // Page too high
         ];
     }
 
@@ -131,7 +131,7 @@ abstract class AbstractDoctrinePaginatorTest extends AbstractTest
         $paginator = $this->createPaginator($options);
 
         $this->assertCount(8, $paginator);
-        $this->assertSame(1, $this->sqlLogger->currentQuery); //Only get results
+        $this->assertSame(1, $this->sqlLogger->currentQuery); // Only get results
         $this->checkIfQueryBuildNotChange($queryBuilder);
     }
 
@@ -188,8 +188,8 @@ abstract class AbstractDoctrinePaginatorTest extends AbstractTest
             [1, 5, range(1, 5), '/LIMIT 5$/'],
             [3, 5, range(11, 15), '/LIMIT 5 OFFSET 10$/'],
             [1, 100, range(1, 52), '/LIMIT 100/'],
-            ['page', 5, range(1, 5), '/LIMIT 5$/'], //Bad page
-            [1000, 5, range(51, 52), '/LIMIT 5 OFFSET 50$/'], //Page too high
+            ['page', 5, range(1, 5), '/LIMIT 5$/'], // Bad page
+            [1000, 5, range(51, 52), '/LIMIT 5 OFFSET 50$/'], // Page too high
         ];
     }
 }

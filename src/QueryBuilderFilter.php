@@ -19,11 +19,11 @@ use Doctrine\ORM\QueryBuilder as QueryBuilderORM;
 
 class QueryBuilderFilter
 {
-    public const SELECT_IN = 'IN'; //WHERE IN
-    public const SELECT_NOT_IN = 'NIN'; //WHERE NOT IN
-    public const SELECT_ALL = 'ALL'; //No Filter (all values)
-    public const SELECT_AUTO = 'AUT'; //WHERE IN. If filter values are empty, no filter (all values)
-    public const SELECT_NO = 'NO'; //Must return no result
+    public const SELECT_IN = 'IN'; // WHERE IN
+    public const SELECT_NOT_IN = 'NIN'; // WHERE NOT IN
+    public const SELECT_ALL = 'ALL'; // No Filter (all values)
+    public const SELECT_AUTO = 'AUT'; // WHERE IN. If filter values are empty, no filter (all values)
+    public const SELECT_NO = 'NO'; // Must return no result
 
     public const MAX_PER_IN = 1000;
 
@@ -43,7 +43,7 @@ class QueryBuilderFilter
         self::checkQueryBuilderClass($queryBuilder);
 
         if (self::SELECT_NO === $filterSign) {
-            //Must return no result
+            // Must return no result
             $queryBuilder->andWhere('0 = 1');
 
             return $queryBuilder;
@@ -59,7 +59,7 @@ class QueryBuilderFilter
                 return $queryBuilder;
             }
 
-            //Must return no result
+            // Must return no result
             $queryBuilder->andWhere('0 = 1');
 
             return $queryBuilder;
@@ -140,16 +140,16 @@ class QueryBuilderFilter
         self::checkQueryBuilderClass($queryBuilder);
 
         if (self::SELECT_NO === $filterSign || self::SELECT_NO === $restrictSign) {
-            //Must return no result
+            // Must return no result
             $queryBuilder->andWhere('0 = 1');
 
             return $queryBuilder;
         }
 
         if (\in_array($restrictSign, [self::SELECT_IN, self::SELECT_AUTO]) && \in_array($filterSign, [self::SELECT_IN, self::SELECT_AUTO]) && \count($filterValues) > 0 && \count($restrictValues) > 0) {
-            //We can simplify the query
+            // We can simplify the query
 
-            //Data cleaning
+            // Data cleaning
             $cleanValues = [];
             foreach ($filterValues as $value) {
                 if (\in_array($value, $restrictValues)) {
@@ -159,9 +159,9 @@ class QueryBuilderFilter
 
             $queryBuilder = self::addMultiFilter($queryBuilder, self::SELECT_IN, $cleanValues, $sqlField, $paramName);
         } elseif (self::SELECT_NOT_IN === $restrictSign && self::SELECT_NOT_IN === $filterSign && \count($filterValues) > 0 && \count($restrictValues) > 0) {
-            //We can simplify the query
+            // We can simplify the query
 
-            //Data fusion
+            // Data fusion
             $cleanValues = $restrictValues;
             foreach ($filterValues as $value) {
                 if (!\in_array($value, $restrictValues)) {
@@ -171,7 +171,7 @@ class QueryBuilderFilter
 
             $queryBuilder = self::addMultiFilter($queryBuilder, self::SELECT_NOT_IN, $cleanValues, $sqlField, $paramName);
         } else {
-            //Two filters
+            // Two filters
             self::addMultiFilter($queryBuilder, $filterSign, $filterValues, $sqlField, $paramName);
             self::addMultiFilter($queryBuilder, $restrictSign, $restrictValues, $sqlField, $paramName.'Restrict');
         }

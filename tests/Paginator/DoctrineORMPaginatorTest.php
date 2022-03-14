@@ -37,8 +37,8 @@ class DoctrineORMPaginatorTest extends AbstractDoctrinePaginatorTest
     public function getTestCopySimplifiedRequestToCountOptionProvider(): array
     {
         return [
-            [['count' => 8], 8], //With int options
-            [[], ['simplified_request' => true]], //With default behavior
+            [['count' => 8], 8], // With int options
+            [[], ['simplified_request' => true]], // With default behavior
             [['count' => ['behavior' => 'orm']], ['behavior' => 'orm', 'simplified_request' => true]],
             [['simplified_request' => true, 'count' => ['behavior' => 'orm']], ['behavior' => 'orm', 'simplified_request' => true]],
             [['simplified_request' => false, 'count' => ['behavior' => 'orm']], ['behavior' => 'orm', 'simplified_request' => false]],
@@ -145,7 +145,7 @@ class DoctrineORMPaginatorTest extends AbstractDoctrinePaginatorTest
 
         $this->assertSame(2, $this->sqlLogger->currentQuery);
         $this->assertCount(52, $paginator);
-        $this->assertLessThan(5, \count($paginator->getIterator())); //Bad iterator
+        $this->assertLessThan(5, \count($paginator->getIterator())); // Bad iterator
         $this->checkIfQueryBuildNotChange($queryBuilder);
     }
 

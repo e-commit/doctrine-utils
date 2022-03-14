@@ -129,13 +129,13 @@ class DoctrinePaginatorBuilder
             return (int) $countQueryBuilder->execute()->fetchOne();
         }
 
-        //count_by_sub_request
+        // count_by_sub_request
         $queryBuilderCount = clone $queryBuilder;
         $queryBuilderClone = clone $queryBuilder;
 
         $queryBuilderClone->resetQueryPart('orderBy');
 
-        $queryBuilderCount->resetQueryParts(); //Remove Query Parts
+        $queryBuilderCount->resetQueryParts(); // Remove Query Parts
         $queryBuilderCount->select('count(*)')
             ->from('('.$queryBuilderClone->getSql().')', 'mainquery');
 
@@ -161,7 +161,7 @@ class DoctrinePaginatorBuilder
             return (int) $countQueryBuilder->getQuery()->getSingleScalarResult();
         }
 
-        //count_by_sub_request
+        // count_by_sub_request
         $cloneQueryBuilder = clone $queryBuilder;
 
         $cloneQueryBuilder->resetDQLPart('orderBy');

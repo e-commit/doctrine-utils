@@ -53,7 +53,7 @@ class QueryBuilderFilterTest extends AbstractTest
 
         $this->checkEntityIds($queryBuilder->execute()->fetchAllAssociative(), $expectedIds);
         $this->assertSame(1, $this->sqlLogger->currentQuery);
-        $this->assertSame($expectedCountParameters, \count($this->sqlLogger->queries[1]['params']));
+        $this->assertCount($expectedCountParameters, $this->sqlLogger->queries[1]['params']);
     }
 
     /**
@@ -67,7 +67,7 @@ class QueryBuilderFilterTest extends AbstractTest
 
         $this->checkEntityIds($query->getResult(), $expectedIds);
         $this->assertSame(1, $this->sqlLogger->currentQuery);
-        $this->assertSame($expectedCountParameters, \count($this->sqlLogger->queries[1]['params']));
+        $this->assertCount($expectedCountParameters, $this->sqlLogger->queries[1]['params']);
     }
 
     public function getTestAddMultiFilterProvider(): array
@@ -78,28 +78,28 @@ class QueryBuilderFilterTest extends AbstractTest
         );
 
         return [
-            //IN
+            // IN
             [QueryBuilderFilter::SELECT_IN, [], [], 1],
             [QueryBuilderFilter::SELECT_IN, [1], [1], 2],
             [QueryBuilderFilter::SELECT_IN, [1, 5, 10], [1, 5, 10], 2],
             [QueryBuilderFilter::SELECT_IN, $bigValues, range(5, 52), 3],
 
-            //NOT IN
+            // NOT IN
             [QueryBuilderFilter::SELECT_NOT_IN, [], range(1, 52), 1],
             [QueryBuilderFilter::SELECT_NOT_IN, [1], range(2, 52), 2],
             [QueryBuilderFilter::SELECT_NOT_IN, $bigValues, range(1, 4), 3],
 
-            //NO
+            // NO
             [QueryBuilderFilter::SELECT_NO, [], [], 1],
             [QueryBuilderFilter::SELECT_NO, [1], [], 1],
             [QueryBuilderFilter::SELECT_NO, $bigValues, [], 1],
 
-            //AUTO
+            // AUTO
             [QueryBuilderFilter::SELECT_AUTO, [], range(1, 52), 1],
             [QueryBuilderFilter::SELECT_AUTO, [1], [1], 2],
             [QueryBuilderFilter::SELECT_AUTO, $bigValues, range(5, 52), 3],
 
-            //ALL
+            // ALL
             [QueryBuilderFilter::SELECT_ALL, [], range(1, 52), 1],
             [QueryBuilderFilter::SELECT_ALL, [1], range(1, 52), 1],
             [QueryBuilderFilter::SELECT_ALL, $bigValues, range(1, 52), 1],
@@ -178,7 +178,7 @@ class QueryBuilderFilterTest extends AbstractTest
     public function getTestAddMultiFilterWithRestrictValuesProvider(): array
     {
         return [
-            //IN - WITHOUT VALUES
+            // IN - WITHOUT VALUES
             [QueryBuilderFilter::SELECT_IN, [], QueryBuilderFilter::SELECT_IN, [], []],
             [QueryBuilderFilter::SELECT_IN, [], QueryBuilderFilter::SELECT_IN, [1], []],
             [QueryBuilderFilter::SELECT_IN, [], QueryBuilderFilter::SELECT_NOT_IN, [], []],
@@ -190,7 +190,7 @@ class QueryBuilderFilterTest extends AbstractTest
             [QueryBuilderFilter::SELECT_IN, [], QueryBuilderFilter::SELECT_ALL, [], []],
             [QueryBuilderFilter::SELECT_IN, [], QueryBuilderFilter::SELECT_ALL, [1], []],
 
-            //IN - WITH VALUES
+            // IN - WITH VALUES
             [QueryBuilderFilter::SELECT_IN, [1, 10, 20], QueryBuilderFilter::SELECT_IN, [], []],
             [QueryBuilderFilter::SELECT_IN, [1, 10, 20], QueryBuilderFilter::SELECT_IN, [1], [1]],
             [QueryBuilderFilter::SELECT_IN, [1, 10, 20], QueryBuilderFilter::SELECT_NOT_IN, [], [1, 10, 20]],
@@ -202,7 +202,7 @@ class QueryBuilderFilterTest extends AbstractTest
             [QueryBuilderFilter::SELECT_IN, [1, 10, 20], QueryBuilderFilter::SELECT_ALL, [], [1, 10, 20]],
             [QueryBuilderFilter::SELECT_IN, [1, 10, 20], QueryBuilderFilter::SELECT_ALL, [1], [1, 10, 20]],
 
-            //NOT IN - WITHOUT VALUES
+            // NOT IN - WITHOUT VALUES
             [QueryBuilderFilter::SELECT_NOT_IN, [], QueryBuilderFilter::SELECT_IN, [], []],
             [QueryBuilderFilter::SELECT_NOT_IN, [], QueryBuilderFilter::SELECT_IN, [1], [1]],
             [QueryBuilderFilter::SELECT_NOT_IN, [], QueryBuilderFilter::SELECT_NOT_IN, [], range(1, 52)],
@@ -214,7 +214,7 @@ class QueryBuilderFilterTest extends AbstractTest
             [QueryBuilderFilter::SELECT_NOT_IN, [], QueryBuilderFilter::SELECT_ALL, [], range(1, 52)],
             [QueryBuilderFilter::SELECT_NOT_IN, [], QueryBuilderFilter::SELECT_ALL, [1], range(1, 52)],
 
-            //NOT IN - WITH VALUES
+            // NOT IN - WITH VALUES
             [QueryBuilderFilter::SELECT_NOT_IN, [1], QueryBuilderFilter::SELECT_IN, [], []],
             [QueryBuilderFilter::SELECT_NOT_IN, [1], QueryBuilderFilter::SELECT_IN, [1, 10, 20], [10, 20]],
             [QueryBuilderFilter::SELECT_NOT_IN, [1], QueryBuilderFilter::SELECT_NOT_IN, [], range(2, 52)],
@@ -226,7 +226,7 @@ class QueryBuilderFilterTest extends AbstractTest
             [QueryBuilderFilter::SELECT_NOT_IN, [1], QueryBuilderFilter::SELECT_ALL, [], range(2, 52)],
             [QueryBuilderFilter::SELECT_NOT_IN, [1], QueryBuilderFilter::SELECT_ALL, [1, 20, 20], range(2, 52)],
 
-            //NO - WITHOUT VALUES
+            // NO - WITHOUT VALUES
             [QueryBuilderFilter::SELECT_NO, [], QueryBuilderFilter::SELECT_IN, [], []],
             [QueryBuilderFilter::SELECT_NO, [], QueryBuilderFilter::SELECT_IN, [1], []],
             [QueryBuilderFilter::SELECT_NO, [], QueryBuilderFilter::SELECT_NOT_IN, [], []],
@@ -238,7 +238,7 @@ class QueryBuilderFilterTest extends AbstractTest
             [QueryBuilderFilter::SELECT_NO, [], QueryBuilderFilter::SELECT_ALL, [], []],
             [QueryBuilderFilter::SELECT_NO, [], QueryBuilderFilter::SELECT_ALL, [1], []],
 
-            //NO - WITH VALUES
+            // NO - WITH VALUES
             [QueryBuilderFilter::SELECT_NO, [1, 10, 20], QueryBuilderFilter::SELECT_IN, [], []],
             [QueryBuilderFilter::SELECT_NO, [1, 10, 20], QueryBuilderFilter::SELECT_IN, [1], []],
             [QueryBuilderFilter::SELECT_NO, [1, 10, 20], QueryBuilderFilter::SELECT_NOT_IN, [], []],
@@ -250,7 +250,7 @@ class QueryBuilderFilterTest extends AbstractTest
             [QueryBuilderFilter::SELECT_NO, [1, 10, 20], QueryBuilderFilter::SELECT_ALL, [], []],
             [QueryBuilderFilter::SELECT_NO, [1, 10, 20], QueryBuilderFilter::SELECT_ALL, [1], []],
 
-            //AUTO - WITHOUT VALUES
+            // AUTO - WITHOUT VALUES
             [QueryBuilderFilter::SELECT_AUTO, [], QueryBuilderFilter::SELECT_IN, [], []],
             [QueryBuilderFilter::SELECT_AUTO, [], QueryBuilderFilter::SELECT_IN, [1], [1]],
             [QueryBuilderFilter::SELECT_AUTO, [], QueryBuilderFilter::SELECT_NOT_IN, [], range(1, 52)],
@@ -262,7 +262,7 @@ class QueryBuilderFilterTest extends AbstractTest
             [QueryBuilderFilter::SELECT_AUTO, [], QueryBuilderFilter::SELECT_ALL, [], range(1, 52)],
             [QueryBuilderFilter::SELECT_AUTO, [], QueryBuilderFilter::SELECT_ALL, [1], range(1, 52)],
 
-            //AUTO - WITH VALUES
+            // AUTO - WITH VALUES
             [QueryBuilderFilter::SELECT_AUTO, [1, 10, 20], QueryBuilderFilter::SELECT_IN, [], []],
             [QueryBuilderFilter::SELECT_AUTO, [1, 10, 20], QueryBuilderFilter::SELECT_IN, [1], [1]],
             [QueryBuilderFilter::SELECT_AUTO, [1, 10, 20], QueryBuilderFilter::SELECT_NOT_IN, [], [1, 10, 20]],
@@ -274,7 +274,7 @@ class QueryBuilderFilterTest extends AbstractTest
             [QueryBuilderFilter::SELECT_AUTO, [1, 10, 20], QueryBuilderFilter::SELECT_ALL, [], [1, 10, 20]],
             [QueryBuilderFilter::SELECT_AUTO, [1, 10, 20], QueryBuilderFilter::SELECT_ALL, [1], [1, 10, 20]],
 
-            //ALL - WITHOUT VALUES
+            // ALL - WITHOUT VALUES
             [QueryBuilderFilter::SELECT_ALL, [], QueryBuilderFilter::SELECT_IN, [], []],
             [QueryBuilderFilter::SELECT_ALL, [], QueryBuilderFilter::SELECT_IN, [1], [1]],
             [QueryBuilderFilter::SELECT_ALL, [], QueryBuilderFilter::SELECT_NOT_IN, [], range(1, 52)],
@@ -286,7 +286,7 @@ class QueryBuilderFilterTest extends AbstractTest
             [QueryBuilderFilter::SELECT_ALL, [], QueryBuilderFilter::SELECT_ALL, [], range(1, 52)],
             [QueryBuilderFilter::SELECT_ALL, [], QueryBuilderFilter::SELECT_ALL, [1], range(1, 52)],
 
-            //ALL - WITH VALUES
+            // ALL - WITH VALUES
             [QueryBuilderFilter::SELECT_ALL, [1, 10, 20], QueryBuilderFilter::SELECT_IN, [], []],
             [QueryBuilderFilter::SELECT_ALL, [1, 10, 20], QueryBuilderFilter::SELECT_IN, [1], [1]],
             [QueryBuilderFilter::SELECT_ALL, [1, 10, 20], QueryBuilderFilter::SELECT_NOT_IN, [], range(1, 52)],
@@ -318,7 +318,7 @@ class QueryBuilderFilterTest extends AbstractTest
 
         $this->checkEntityIds($queryBuilder->execute()->fetchAllAssociative(), $expectedIds);
         $this->assertSame(1, $this->sqlLogger->currentQuery);
-        $this->assertSame($expectedCountParameters, \count($this->sqlLogger->queries[1]['params']));
+        $this->assertCount($expectedCountParameters, $this->sqlLogger->queries[1]['params']);
     }
 
     /**
@@ -332,19 +332,19 @@ class QueryBuilderFilterTest extends AbstractTest
 
         $this->checkEntityIds($query->getResult(), $expectedIds);
         $this->assertSame(1, $this->sqlLogger->currentQuery);
-        $this->assertSame($expectedCountParameters, \count($this->sqlLogger->queries[1]['params']));
+        $this->assertCount($expectedCountParameters, $this->sqlLogger->queries[1]['params']);
     }
 
     public function getTestAddEqualFilterProvider(): array
     {
         return [
-            //EQUAL - TRUE
+            // EQUAL - TRUE
             [true, 10, [10], 2],
             [true, '10', [10], 2],
             [true, null, range(1, 52), 1],
             [true, '', range(1, 52), 1],
 
-            //EQUAL - FALSE
+            // EQUAL - FALSE
             [false, 1, range(2, 52), 2],
             [false, '1', range(2, 52), 2],
             [false, null, range(1, 52), 1],
@@ -370,7 +370,7 @@ class QueryBuilderFilterTest extends AbstractTest
 
         $this->checkEntityIds($queryBuilder->execute()->fetchAllAssociative(), $expectedIds);
         $this->assertSame(1, $this->sqlLogger->currentQuery);
-        $this->assertSame($expectedCountParameters, \count($this->sqlLogger->queries[1]['params']));
+        $this->assertCount($expectedCountParameters, $this->sqlLogger->queries[1]['params']);
     }
 
     /**
@@ -384,7 +384,7 @@ class QueryBuilderFilterTest extends AbstractTest
 
         $this->checkEntityIds($query->getResult(), $expectedIds);
         $this->assertSame(1, $this->sqlLogger->currentQuery);
-        $this->assertSame($expectedCountParameters, \count($this->sqlLogger->queries[1]['params']));
+        $this->assertCount($expectedCountParameters, $this->sqlLogger->queries[1]['params']);
     }
 
     public function getTestAddComparatorFilterProvider(): array
@@ -415,7 +415,7 @@ class QueryBuilderFilterTest extends AbstractTest
 
         $this->checkEntityIds($queryBuilder->execute()->fetchAllAssociative(), $expectedIds);
         $this->assertSame(1, $this->sqlLogger->currentQuery);
-        $this->assertSame($expectedCountParameters, \count($this->sqlLogger->queries[1]['params']));
+        $this->assertCount($expectedCountParameters, $this->sqlLogger->queries[1]['params']);
     }
 
     /**
@@ -429,20 +429,20 @@ class QueryBuilderFilterTest extends AbstractTest
 
         $this->checkEntityIds($query->getResult(), $expectedIds);
         $this->assertSame(1, $this->sqlLogger->currentQuery);
-        $this->assertSame($expectedCountParameters, \count($this->sqlLogger->queries[1]['params']));
+        $this->assertCount($expectedCountParameters, $this->sqlLogger->queries[1]['params']);
     }
 
     public function getTestAddContainFilterProvider(): array
     {
         return [
-            //CONTAIN - TRUE
+            // CONTAIN - TRUE
             [true, 'Entity 5', [5, 50, 51, 52], 2],
             [true, '_ntity', [], 2],
             [true, 'Entity %', [], 2],
             [true, '', range(1, 52), 1],
             [true, null, range(1, 52), 1],
 
-            //CONTAIN - FALSE
+            // CONTAIN - FALSE
             [false, 'Entity 5', array_merge(range(1, 4), range(6, 49)), 2],
             [false, '_ntity', range(1, 52), 2],
             [false, 'Entity %', range(1, 52), 2],
