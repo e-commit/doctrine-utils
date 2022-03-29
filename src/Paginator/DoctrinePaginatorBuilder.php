@@ -37,7 +37,7 @@ class DoctrinePaginatorBuilder
      *                       * count_by_sub_request: Use sub request
      *                       * orm: Use Doctrine ORM Paginator [ONLY WITH ORM QUERY BUILDER]
      */
-    public static function countQueryBuilder(array $options = []): int
+    final public static function countQueryBuilder(array $options = []): int
     {
         $resolver = new OptionsResolver();
         $resolver->setRequired('query_builder');
@@ -100,7 +100,7 @@ class DoctrinePaginatorBuilder
         return self::countQueryBuilderORM($options['query_builder'], $options);
     }
 
-    public static function createDoctrinePaginator($queryBuilder, $page, int $maxPerPage, array $options = []): AbstractDoctrinePaginator
+    final public static function createDoctrinePaginator($queryBuilder, $page, int $maxPerPage, array $options = []): AbstractDoctrinePaginator
     {
         $options = array_merge($options, [
             'query_builder' => $queryBuilder,

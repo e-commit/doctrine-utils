@@ -38,7 +38,7 @@ class QueryBuilderFilter
      *
      * @return \Doctrine\DBAL\Query\QueryBuilder|\Doctrine\ORM\QueryBuilder
      */
-    public static function addMultiFilter($queryBuilder, string $filterSign, array $filterValues, string $sqlField, string $paramName): object
+    final public static function addMultiFilter($queryBuilder, string $filterSign, array $filterValues, string $sqlField, string $paramName): object
     {
         self::checkQueryBuilderClass($queryBuilder);
 
@@ -83,7 +83,7 @@ class QueryBuilderFilter
      *
      * @return \Doctrine\DBAL\Query\QueryBuilder|\Doctrine\ORM\QueryBuilder
      */
-    protected static function addSimpleMultiFilter($queryBuilder, string $filterSign, array $filterValues, string $sqlField, string $paramName): object
+    private static function addSimpleMultiFilter($queryBuilder, string $filterSign, array $filterValues, string $sqlField, string $paramName): object
     {
         $clauseSql = (self::SELECT_IN === $filterSign || self::SELECT_AUTO === $filterSign) ? 'IN' : 'NOT IN';
 
@@ -104,7 +104,7 @@ class QueryBuilderFilter
      *
      * @return \Doctrine\DBAL\Query\QueryBuilder|\Doctrine\ORM\QueryBuilder
      */
-    protected static function addGroupMultiFilter($queryBuilder, string $filterSign, array $filterValues, string $sqlField, string $paramName): object
+    private static function addGroupMultiFilter($queryBuilder, string $filterSign, array $filterValues, string $sqlField, string $paramName): object
     {
         $clauseSql = (self::SELECT_IN === $filterSign || self::SELECT_AUTO === $filterSign) ? 'IN' : 'NOT IN';
         $separatorClauseSql = (self::SELECT_IN === $filterSign || self::SELECT_AUTO === $filterSign) ? 'OR' : 'AND';
@@ -135,7 +135,7 @@ class QueryBuilderFilter
      *
      * @return \Doctrine\DBAL\Query\QueryBuilder|\Doctrine\ORM\QueryBuilder
      */
-    public static function addMultiFilterWithRestrictValues($queryBuilder, string $filterSign, array $filterValues, string $sqlField, string $paramName, string $restrictSign, array $restrictValues): object
+    final public static function addMultiFilterWithRestrictValues($queryBuilder, string $filterSign, array $filterValues, string $sqlField, string $paramName, string $restrictSign, array $restrictValues): object
     {
         self::checkQueryBuilderClass($queryBuilder);
 
@@ -190,7 +190,7 @@ class QueryBuilderFilter
      *
      * @return \Doctrine\DBAL\Query\QueryBuilder|\Doctrine\ORM\QueryBuilder
      */
-    public static function addEqualFilter($queryBuilder, bool $equal, $filterValue, string $sqlField, string $paramName): object
+    final public static function addEqualFilter($queryBuilder, bool $equal, $filterValue, string $sqlField, string $paramName): object
     {
         self::checkQueryBuilderClass($queryBuilder);
 
@@ -219,7 +219,7 @@ class QueryBuilderFilter
      *
      * @return \Doctrine\DBAL\Query\QueryBuilder|\Doctrine\ORM\QueryBuilder
      */
-    public static function addComparatorFilter($queryBuilder, string $sign, $filterValue, string $sqlField, string $paramName): object
+    final public static function addComparatorFilter($queryBuilder, string $sign, $filterValue, string $sqlField, string $paramName): object
     {
         self::checkQueryBuilderClass($queryBuilder);
 
@@ -244,7 +244,7 @@ class QueryBuilderFilter
      *
      * @return \Doctrine\DBAL\Query\QueryBuilder|\Doctrine\ORM\QueryBuilder
      */
-    public static function addContainFilter($queryBuilder, bool $contain, ?string $filterValue, string $sqlField, string $paramName): object
+    final public static function addContainFilter($queryBuilder, bool $contain, ?string $filterValue, string $sqlField, string $paramName): object
     {
         self::checkQueryBuilderClass($queryBuilder);
 
@@ -263,7 +263,7 @@ class QueryBuilderFilter
         return $queryBuilder;
     }
 
-    protected static function checkQueryBuilderClass($queryBuilder): void
+    private static function checkQueryBuilderClass($queryBuilder): void
     {
         if ($queryBuilder instanceof QueryBuilderORM || $queryBuilder instanceof QueryBuilderDBAL) {
             return;
