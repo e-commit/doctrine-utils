@@ -13,26 +13,33 @@ jobs:
             fail-fast: false
             matrix:
                 include:
-                    #Mini
+                    #Mini (for each Symfony version)
                     -   php-version: '7.3'
+                        symfony-version: '4.4.*'
                         composer-flags: '--prefer-stable --prefer-lowest'
-                        description: 'with lowest'
+                        description: 'with SF 4.4.* lowest'
+                    -   php-version: '7.3'
+                        symfony-version: '5.4.*'
+                        composer-flags: '--prefer-stable --prefer-lowest'
+                        description: 'with SF 5.4.* lowest'
+                    -   php-version: '8.0'
+                        symfony-version: '6.0.*'
+                        composer-flags: '--prefer-stable --prefer-lowest'
+                        description: 'with SF 6.0.* lowest'
 
                     #Symfony versions
                     -   php-version: '8.1'
-                        symfony-version: '^4.4'
-                        description: 'with SF ^4.4'
+                        symfony-version: '4.4.*'
+                        description: 'with SF 4.4.*'
                     -   php-version: '8.1'
-                        symfony-version: '^5.4'
-                        description: 'with SF ^5.4'
+                        symfony-version: '5.4.*'
+                        description: 'with SF 5.4.*'
                     -   php-version: '8.1'
-                        symfony-version: '~6.0'
-                        description: 'with SF ~6.0'
-                    -   php-version: '8.1'
-                        symfony-version: '^6.0'
-                        description: 'with SF ^6.0'
+                        symfony-version: '6.0.*'
+                        description: 'with SF 6.0.*'
 
                     #PHP versions
+                    -   php-version: '7.3'
                     -   php-version: '7.4'
                     -   php-version: '8.0'
                     -   php-version: '8.1'
@@ -55,6 +62,7 @@ jobs:
                 with:
                     php-version: ${{ matrix.php-version }}
                     coverage: none
+                    tools: flex
                 env:
                     update: true
 
@@ -73,6 +81,10 @@ jobs:
                     path: ${{ steps.composer-cache.outputs.dir }}
                     key: composer-${{ runner.os }}-${{ matrix.php-version }}-${{ hashFiles('**/composer.*') }}-${{ matrix.composer-flags }}
                     restore-keys: composer-${{ runner.os }}-${{ matrix.php-version }}-
+
+            -   name: Configure Symfony Flex
+                if: matrix.symfony-version
+                run: composer config extra.symfony.require ${{ matrix.symfony-version }}
 
             -   name: Install dependencies
                 run: composer update --no-interaction --no-progress ${{ matrix.composer-flags }}
