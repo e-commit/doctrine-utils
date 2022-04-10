@@ -177,7 +177,7 @@ abstract class AbstractDoctrinePaginatorTest extends AbstractTest
 
         $this->assertInstanceOf(\ArrayIterator::class, $paginator->getIterator());
         $this->assertSame(2, $this->sqlLogger->currentQuery);
-        $this->assertRegExp($expectedRegexSql, $this->sqlLogger->queries[2]['sql']);
+        $this->assertMatchesRegularExpression($expectedRegexSql, $this->sqlLogger->queries[2]['sql']);
         $this->checkEntityIds($paginator, $expectedIds);
         $this->checkIfQueryBuildNotChange($queryBuilder);
     }
