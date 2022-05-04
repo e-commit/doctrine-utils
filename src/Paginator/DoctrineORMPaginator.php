@@ -58,9 +58,7 @@ final class DoctrineORMPaginator extends AbstractDoctrinePaginator
         $this->setOffsetAndLimit($idsQueryBuilder);
         $doctrinePaginator = new Paginator($idsQueryBuilder, false);
         $doctrinePaginator->setUseOutputWalkers(true);
-        $ids = array_map(function ($row) {
-            return $row['pk'];
-        }, $doctrinePaginator->getIterator()->getArrayCopy());
+        $ids = array_map(fn ($row) => $row['pk'], $doctrinePaginator->getIterator()->getArrayCopy());
 
         $resultsByIdsQueryBuilder = clone $queryBuilder;
         $resultsByIdsQueryBuilder->resetDQLPart('where');

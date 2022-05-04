@@ -42,9 +42,7 @@ class DoctrinePaginatorBuilder
         $resolver = new OptionsResolver();
         $resolver->setRequired('query_builder');
         $resolver->setDefaults([
-            'behavior' => function (Options $options): string {
-                return self::getDefaultCountBehavior($options['query_builder']);
-            },
+            'behavior' => fn (Options $options): string => self::getDefaultCountBehavior($options['query_builder']),
             'alias' => null,
             'distinct_alias' => null,
             'simplified_request' => null,

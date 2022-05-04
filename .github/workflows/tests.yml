@@ -14,11 +14,11 @@ jobs:
             matrix:
                 include:
                     #Mini (for each Symfony version)
-                    -   php-version: '7.3'
+                    -   php-version: '8.0'
                         symfony-version: '4.4.*'
                         composer-flags: '--prefer-stable --prefer-lowest'
                         description: 'with SF 4.4.* lowest'
-                    -   php-version: '7.3'
+                    -   php-version: '8.0'
                         symfony-version: '5.4.*'
                         composer-flags: '--prefer-stable --prefer-lowest'
                         description: 'with SF 5.4.* lowest'
@@ -39,8 +39,6 @@ jobs:
                         description: 'with SF 6.0.*'
 
                     #PHP versions
-                    -   php-version: '7.3'
-                    -   php-version: '7.4'
                     -   php-version: '8.0'
                     -   php-version: '8.1'
 
