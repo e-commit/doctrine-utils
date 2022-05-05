@@ -47,7 +47,7 @@ jobs:
                         description: 'with Coding Standards'
                         coding-standards: true
 
-                    #Static Analysis
+                    #Static Analysis (min PHP version)
                     -   php-version: '8.0'
                         description: 'with Static Analysis'
                         static-analysis: true
