@@ -48,7 +48,7 @@ jobs:
                         coding-standards: true
 
                     #Static Analysis
-                    -   php-version: '8.1'
+                    -   php-version: '8.0'
                         description: 'with Static Analysis'
                         static-analysis: true
 
