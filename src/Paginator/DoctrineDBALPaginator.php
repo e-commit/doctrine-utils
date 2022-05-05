@@ -44,12 +44,20 @@ final class DoctrineDBALPaginator extends AbstractDoctrinePaginator
         if (null === $this->getOption('by_identifier')) {
             $this->setOffsetAndLimit($queryBuilder);
 
+            /**
+             * @psalm-suppress DeprecatedMethod
+             * @psalm-suppress PossiblyInvalidMethodCall
+             */
             return new \ArrayIterator($queryBuilder->execute()->fetchAllAssociative());
         }
 
         $idsQueryBuilder = clone $queryBuilder;
         $idsQueryBuilder->select(sprintf('DISTINCT %s as pk', $this->getOption('by_identifier')));
         $this->setOffsetAndLimit($idsQueryBuilder);
+        /**
+         * @psalm-suppress DeprecatedMethod
+         * @psalm-suppress PossiblyInvalidMethodCall
+         */
         $ids = $idsQueryBuilder->execute()->fetchFirstColumn();
 
         $resultsByIdsQueryBuilder = clone $queryBuilder;
@@ -57,6 +65,10 @@ final class DoctrineDBALPaginator extends AbstractDoctrinePaginator
         $resultsByIdsQueryBuilder->setParameters([]);
         QueryBuilderFilter::addMultiFilter($resultsByIdsQueryBuilder, QueryBuilderFilter::SELECT_IN, $ids, $this->getOption('by_identifier'), 'paginate_pks');
 
+        /**
+         * @psalm-suppress DeprecatedMethod
+         * @psalm-suppress PossiblyInvalidMethodCall
+         */
         return new \ArrayIterator($resultsByIdsQueryBuilder->execute()->fetchAllAssociative());
     }
 

@@ -23,10 +23,11 @@
         "symfony/options-resolver": "^4.4|^5.4|^6.0"
     },
     "require-dev": {
-        "symfony/cache": "*",
         "doctrine/orm": "*",
         "friendsofphp/php-cs-fixer": "^3.0",
-        "phpunit/phpunit": "^9.3"
+        "phpunit/phpunit": "^9.3",
+        "symfony/cache": "*",
+        "vimeo/psalm": "^4.23"
     },
     "suggest": {
         "doctrine/orm": "Doctrine ORM"

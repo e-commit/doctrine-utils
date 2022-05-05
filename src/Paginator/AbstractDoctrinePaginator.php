@@ -13,12 +13,14 @@ declare(strict_types=1);
 
 namespace Ecommit\DoctrineUtils\Paginator;
 
+use Doctrine\DBAL\Query\QueryBuilder as QueryBuilderDBAL;
+use Doctrine\ORM\QueryBuilder as QueryBuilderORM;
 use Ecommit\Paginator\AbstractPaginator;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 abstract class AbstractDoctrinePaginator extends AbstractPaginator
 {
-    final protected function setOffsetAndLimit($queryBuilder): void
+    final protected function setOffsetAndLimit(QueryBuilderDBAL|QueryBuilderORM $queryBuilder): void
     {
         $offset = ($this->getPage() - 1) * $this->getMaxPerPage();
         $queryBuilder->setFirstResult($offset);
@@ -34,6 +36,6 @@ abstract class AbstractDoctrinePaginator extends AbstractPaginator
         ]);
         $resolver->setAllowedTypes('by_identifier', ['string', 'null']);
         $resolver->setAllowedTypes('count', ['int', 'array']);
-        $resolver->setAllowedValues('count', fn ($value) => \is_array($value) || $value >= 0);
+        $resolver->setAllowedValues('count', fn (int|array $value) => \is_array($value) || $value >= 0);
     }
 }

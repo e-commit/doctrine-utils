@@ -34,6 +34,7 @@ return $config->setRiskyAllowed(true)
         'ordered_imports' => true,
         'phpdoc_order' => true,
         'protected_to_private' => false,
+        'phpdoc_to_comment' => ['ignored_tags' => ['psalm-suppress']],
     ])
     ->setFinder($finder)
 ;

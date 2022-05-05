@@ -449,14 +449,6 @@ class DoctrinePaginatorBuilderTest extends AbstractTest
         $this->checkIfQueryBuildNotChange($queryBuilder);
     }
 
-    public function testCreateDoctrinePaginatorBadQueryBuilder(): void
-    {
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('Bad class');
-
-        DoctrinePaginatorBuilder::createDoctrinePaginator('bad', 1, 5);
-    }
-
     public function testCreateDoctrinePaginatorDBAL(): void
     {
         $queryBuilder = $this->createDefaultQueryBuilderDBAL();

@@ -49,7 +49,7 @@ class DoctrinePaginatorBuilder
         ]);
         $resolver->setAllowedTypes('query_builder', [QueryBuilderDBAL::class, QueryBuilderORM::class]);
         $resolver->setAllowedTypes('behavior', 'string');
-        $resolver->setAllowedValues('behavior', function ($behavior) use ($options): bool {
+        $resolver->setAllowedValues('behavior', function (string $behavior) use ($options): bool {
             if ($options['query_builder'] instanceof QueryBuilderDBAL) {
                 return \in_array($behavior, ['count_by_alias', 'count_by_sub_request']);
             }
@@ -57,7 +57,7 @@ class DoctrinePaginatorBuilder
             return \in_array($behavior, ['count_by_alias', 'count_by_sub_request', 'orm']);
         });
         $resolver->setAllowedTypes('alias', ['string', 'null']);
-        $resolver->setNormalizer('alias', function (Options $options, $alias): ?string {
+        $resolver->setNormalizer('alias', function (Options $options, ?string $alias): ?string {
             if ('count_by_alias' === $options['behavior'] && null === $alias) {
                 throw new MissingOptionsException('When "behavior" option is set to "count_by_alias", "alias" option is required');
             } elseif ('count_by_alias' !== $options['behavior'] && null !== $alias) {
@@ -67,7 +67,7 @@ class DoctrinePaginatorBuilder
             return $alias;
         });
         $resolver->setAllowedTypes('distinct_alias', ['bool', 'null']);
-        $resolver->setNormalizer('distinct_alias', function (Options $options, $distinctAlias): ?bool {
+        $resolver->setNormalizer('distinct_alias', function (Options $options, ?bool $distinctAlias): ?bool {
             if ('count_by_alias' === $options['behavior'] && null === $distinctAlias) {
                 return true;
             } elseif ('count_by_alias' !== $options['behavior'] && null !== $distinctAlias) {
@@ -77,7 +77,7 @@ class DoctrinePaginatorBuilder
             return $distinctAlias;
         });
         $resolver->setAllowedTypes('simplified_request', ['bool', 'null']);
-        $resolver->setNormalizer('simplified_request', function (Options $options, $simplifiedRequest): ?bool {
+        $resolver->setNormalizer('simplified_request', function (Options $options, ?bool $simplifiedRequest): ?bool {
             if (null !== $simplifiedRequest && !($options['query_builder'] instanceof QueryBuilderORM)) {
                 throw new InvalidOptionsException('The "simplified_request" option can only be used with ORM QueryBuilder');
             }
@@ -98,7 +98,7 @@ class DoctrinePaginatorBuilder
         return self::countQueryBuilderORM($options['query_builder'], $options);
     }
 
-    final public static function createDoctrinePaginator($queryBuilder, $page, int $maxPerPage, array $options = []): AbstractDoctrinePaginator
+    final public static function createDoctrinePaginator(QueryBuilderDBAL|QueryBuilderORM $queryBuilder, mixed $page, int $maxPerPage, array $options = []): AbstractDoctrinePaginator
     {
         $options = array_merge($options, [
             'query_builder' => $queryBuilder,
@@ -108,11 +108,9 @@ class DoctrinePaginatorBuilder
 
         if ($queryBuilder instanceof QueryBuilderDBAL) {
             return new DoctrineDBALPaginator($options);
-        } elseif ($queryBuilder instanceof QueryBuilderORM) {
-            return new DoctrineORMPaginator($options);
         }
 
-        throw new \Exception('Bad class');
+        return new DoctrineORMPaginator($options);
     }
 
     private static function countQueryBuilderDBAL(QueryBuilderDBAL $queryBuilder, array $options): int
@@ -124,6 +122,10 @@ class DoctrinePaginatorBuilder
             $countQueryBuilder->select(sprintf('count(%s%s)', $distinct, $options['alias']));
             $countQueryBuilder->resetQueryPart('orderBy');
 
+            /**
+             * @psalm-suppress DeprecatedMethod
+             * @psalm-suppress PossiblyInvalidMethodCall
+             */
             return (int) $countQueryBuilder->execute()->fetchOne();
         }
 
@@ -137,6 +139,10 @@ class DoctrinePaginatorBuilder
         $queryBuilderCount->select('count(*)')
             ->from('('.$queryBuilderClone->getSql().')', 'mainquery');
 
+        /**
+         * @psalm-suppress DeprecatedMethod
+         * @psalm-suppress PossiblyInvalidMethodCall
+         */
         return (int) $queryBuilderCount->execute()->fetchOne();
     }
 
@@ -148,7 +154,7 @@ class DoctrinePaginatorBuilder
             $doctrinePaginator = new Paginator($cloneQueryBuilder->getQuery());
             $doctrinePaginator->setUseOutputWalkers(!$options['simplified_request']);
 
-            return (int) $doctrinePaginator->count();
+            return $doctrinePaginator->count();
         } elseif ('count_by_alias' === $options['behavior']) {
             $countQueryBuilder = clone $queryBuilder;
 
@@ -176,14 +182,12 @@ class DoctrinePaginatorBuilder
         return (int) $countQuery->getSingleScalarResult();
     }
 
-    public static function getDefaultCountBehavior($queryBuilder): ?string
+    public static function getDefaultCountBehavior(QueryBuilderDBAL|QueryBuilderORM $queryBuilder): string
     {
         if ($queryBuilder instanceof QueryBuilderDBAL) {
             return 'count_by_sub_request';
-        } elseif ($queryBuilder instanceof QueryBuilderORM) {
-            return 'orm';
         }
 
-        return null;
+        return 'orm';
     }
 }

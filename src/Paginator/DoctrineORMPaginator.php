@@ -58,7 +58,7 @@ final class DoctrineORMPaginator extends AbstractDoctrinePaginator
         $this->setOffsetAndLimit($idsQueryBuilder);
         $doctrinePaginator = new Paginator($idsQueryBuilder, false);
         $doctrinePaginator->setUseOutputWalkers(true);
-        $ids = array_map(fn ($row) => $row['pk'], $doctrinePaginator->getIterator()->getArrayCopy());
+        $ids = array_map(fn ($row): mixed => $row['pk'], $doctrinePaginator->getIterator()->getArrayCopy());
 
         $resultsByIdsQueryBuilder = clone $queryBuilder;
         $resultsByIdsQueryBuilder->resetDQLPart('where');
@@ -76,7 +76,7 @@ final class DoctrineORMPaginator extends AbstractDoctrinePaginator
             'fetch_join_collection' => null,
         ]);
         $resolver->setAllowedTypes('query_builder', QueryBuilder::class);
-        $resolver->setNormalizer('count', function (Options $options, $count) {
+        $resolver->setNormalizer('count', function (Options $options, int|array $count) {
             if (\is_int($count)) {
                 return $count;
             }
@@ -88,7 +88,7 @@ final class DoctrineORMPaginator extends AbstractDoctrinePaginator
             return $count;
         });
         $resolver->setAllowedTypes('simplified_request', ['bool', 'null']);
-        $resolver->setNormalizer('simplified_request', function (Options $options, $simplifiedRequest): ?bool {
+        $resolver->setNormalizer('simplified_request', function (Options $options, ?bool $simplifiedRequest): ?bool {
             if (null === $options['by_identifier'] && null === $simplifiedRequest) {
                 return true;
             } elseif (null !== $options['by_identifier'] && null !== $simplifiedRequest) {
@@ -98,7 +98,7 @@ final class DoctrineORMPaginator extends AbstractDoctrinePaginator
             return $simplifiedRequest;
         });
         $resolver->setAllowedTypes('fetch_join_collection', ['bool', 'null']);
-        $resolver->setNormalizer('fetch_join_collection', function (Options $options, $fetchJoinCollection): ?bool {
+        $resolver->setNormalizer('fetch_join_collection', function (Options $options, ?bool $fetchJoinCollection): ?bool {
             if (null === $options['by_identifier'] && null === $fetchJoinCollection) {
                 return false;
             } elseif (null !== $options['by_identifier'] && null !== $fetchJoinCollection) {

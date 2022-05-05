@@ -17,14 +17,6 @@ use Ecommit\DoctrineUtils\QueryBuilderFilter;
 
 class QueryBuilderFilterTest extends AbstractTest
 {
-    public function testAddMultiFilterBadQueryBuilder(): void
-    {
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('Bad class');
-
-        QueryBuilderFilter::addMultiFilter('bad', QueryBuilderFilter::SELECT_ALL, [], 'e.entity_id', 'entity_id');
-    }
-
     public function testAddMultiFilterBadFilterSignDBAL(): void
     {
         $this->expectException(\Exception::class);
@@ -104,14 +96,6 @@ class QueryBuilderFilterTest extends AbstractTest
             [QueryBuilderFilter::SELECT_ALL, [1], range(1, 52), 1],
             [QueryBuilderFilter::SELECT_ALL, $bigValues, range(1, 52), 1],
         ];
-    }
-
-    public function testAddMultiFilterWithRestrictValuesBadQueryBuilder(): void
-    {
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('Bad class');
-
-        QueryBuilderFilter::addMultiFilterWithRestrictValues('bad', QueryBuilderFilter::SELECT_ALL, [], 'e.entity_id', 'entity_id', QueryBuilderFilter::SELECT_ALL, []);
     }
 
     public function testAddMultiFilterWithRestrictValuesBadFilterSignDBAL(): void
@@ -300,14 +284,6 @@ class QueryBuilderFilterTest extends AbstractTest
         ];
     }
 
-    public function testAddEqualFilterBadQueryBuilder(): void
-    {
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('Bad class');
-
-        QueryBuilderFilter::addEqualFilter('bad', true, 'value', 'e.entity_id', 'entity_id');
-    }
-
     /**
      * @dataProvider getTestAddEqualFilterProvider
      */
@@ -352,14 +328,6 @@ class QueryBuilderFilterTest extends AbstractTest
         ];
     }
 
-    public function testAddComparatorFilterBadQueryBuilder(): void
-    {
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('Bad class');
-
-        QueryBuilderFilter::addComparatorFilter('bad', '>', 1, 'e.entity_id', 'entity_id');
-    }
-
     /**
      * @dataProvider getTestAddComparatorFilterProvider
      */
@@ -395,14 +363,6 @@ class QueryBuilderFilterTest extends AbstractTest
             ['>', null, range(1, 52), 1],
             ['>', '', range(1, 52), 1],
         ];
-    }
-
-    public function testAddContainFilterBadQueryBuilder(): void
-    {
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('Bad class');
-
-        QueryBuilderFilter::addContainFilter('bad', true, 'val', 'e.entity_id', 'entity_id');
     }
 
     /**
