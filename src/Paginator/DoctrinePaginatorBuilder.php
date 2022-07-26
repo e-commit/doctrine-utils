@@ -169,9 +169,13 @@ class DoctrinePaginatorBuilder
         $cloneQueryBuilder = clone $queryBuilder;
 
         $cloneQueryBuilder->resetDQLPart('orderBy');
+        $sql = $cloneQueryBuilder->getQuery()->getSQL();
+        if (!\is_string($sql)) {
+            throw new \Exception('Query builder is not compatible (multiple SQL queries)');
+        }
         $rsm = new ResultSetMapping();
         $rsm->addScalarResult('cnt', 'cnt');
-        $countSql = sprintf('SELECT count(*) as cnt FROM (%s) mainquery', $cloneQueryBuilder->getQuery()->getSQL());
+        $countSql = sprintf('SELECT count(*) as cnt FROM (%s) mainquery', $sql);
         $countQuery = $queryBuilder->getEntityManager()->createNativeQuery($countSql, $rsm);
         $i = 0;
         foreach ($queryBuilder->getParameters() as $parameter) {
