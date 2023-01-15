@@ -14,10 +14,17 @@ declare(strict_types=1);
 namespace Ecommit\DoctrineUtils\Tests\App;
 
 use Doctrine\DBAL\Logging\SQLLogger as BaseSQLLogger;
+use Doctrine\DBAL\Types\Type;
 
 class SqlLogger implements BaseSQLLogger
 {
-    /** @var array<int, array<string>> */
+    /**
+     * @var array<int, array{
+     *     sql: string,
+     *     params: list<mixed>|array<string, mixed>,
+     *     types: array<int, Type|int|string|null>|array<string, Type|int|string|null>|null
+     * }>
+     */
     public $queries = [];
 
     /** @var int */
@@ -25,6 +32,10 @@ class SqlLogger implements BaseSQLLogger
 
     public function startQuery($sql, ?array $params = null, ?array $types = null): void
     {
+        if (null === $params) {
+            $params = [];
+        }
+
         $this->queries[++$this->currentQuery] = [
             'sql' => $sql,
             'params' => $params,

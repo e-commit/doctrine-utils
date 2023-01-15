@@ -23,22 +23,16 @@ use PHPUnit\Framework\TestCase;
 
 abstract class AbstractTest extends TestCase
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    protected $em;
-
-    /**
-     * @var SqlLogger
-     */
-    protected $sqlLogger;
-
-    protected $queryBuilder;
+    protected EntityManagerInterface $em;
+    protected SqlLogger $sqlLogger;
+    protected QueryBuilderDBAL|QueryBuilderORM|null $queryBuilder = null;
 
     protected function setUp(): void
     {
         $this->em = Doctrine::getEntityManager();
-        $this->sqlLogger = $this->em->getConnection()->getConfiguration()->getSQLLogger();
+        /** @var SqlLogger $sqlLogger */
+        $sqlLogger = $this->em->getConnection()->getConfiguration()->getSQLLogger();
+        $this->sqlLogger = $sqlLogger;
     }
 
     protected function tearDown(): void
@@ -65,6 +59,9 @@ abstract class AbstractTest extends TestCase
         return $queryBuilder;
     }
 
+    /**
+     * @param class-string $repository
+     */
     protected function createQueryBuilderORM(string $repository, string $alias): QueryBuilderORM
     {
         return $this->em->getRepository($repository)->createQueryBuilder($alias);
@@ -81,7 +78,10 @@ abstract class AbstractTest extends TestCase
         return $queryBuilder;
     }
 
-    protected function checkEntityIds($result, $expectedIds): void
+    /**
+     * @param iterable<mixed> $result
+     */
+    protected function checkEntityIds(iterable $result, array $expectedIds): void
     {
         $ids = [];
         foreach ($result as $entity) {
@@ -97,12 +97,12 @@ abstract class AbstractTest extends TestCase
         $this->assertEquals($expectedIds, $ids);
     }
 
-    protected function saveQueryBuilder($queryBuilder): void
+    protected function saveQueryBuilder(QueryBuilderDBAL|QueryBuilderORM $queryBuilder): void
     {
         $this->queryBuilder = clone $queryBuilder;
     }
 
-    protected function checkIfQueryBuildNotChange($queryBuilder): void
+    protected function checkIfQueryBuildNotChange(QueryBuilderDBAL|QueryBuilderORM $queryBuilder): void
     {
         $this->assertEquals($this->queryBuilder, $queryBuilder);
     }

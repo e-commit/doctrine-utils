@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Ecommit\DoctrineUtils\Tests;
 
+use Doctrine\DBAL\Result;
 use Ecommit\DoctrineUtils\QueryBuilderFilter;
 
 class QueryBuilderFilterTest extends AbstractTest
@@ -23,7 +24,7 @@ class QueryBuilderFilterTest extends AbstractTest
         $this->expectExceptionMessage('Bad filter sign');
 
         $queryBuilder = $this->createDefaultQueryBuilderDBAL();
-        QueryBuilderFilter::addMultiFilter($queryBuilder, 'bad', [], 'e.entity_id', 'entity_id');
+        QueryBuilderFilter::addMultiFilter($queryBuilder, 'bad', [], 'e.entity_id', 'entity_id'); // @phpstan-ignore-line
     }
 
     public function testAddMultiFilterBadFilterSignORM(): void
@@ -32,24 +33,30 @@ class QueryBuilderFilterTest extends AbstractTest
         $this->expectExceptionMessage('Bad filter sign');
 
         $queryBuilder = $this->createDefaultQueryBuilderORM();
-        QueryBuilderFilter::addMultiFilter($queryBuilder, 'bad', [], 'e.entity_id', 'entity_id');
+        QueryBuilderFilter::addMultiFilter($queryBuilder, 'bad', [], 'e.entity_id', 'entity_id'); // @phpstan-ignore-line
     }
 
     /**
      * @dataProvider getTestAddMultiFilterProvider
+     *
+     * @param QueryBuilderFilter::SELECT_* $filterSign
      */
     public function testAddMultiFilterDBAL(string $filterSign, array $filterValues, array $expectedIds, int $expectedCountParameters): void
     {
         $queryBuilder = $this->createDefaultQueryBuilderDBAL();
         QueryBuilderFilter::addMultiFilter($queryBuilder, $filterSign, $filterValues, 'e.entity_id', 'entity_id');
 
-        $this->checkEntityIds($queryBuilder->execute()->fetchAllAssociative(), $expectedIds);
+        /** @var Result $result */
+        $result = $queryBuilder->execute();
+        $this->checkEntityIds($result->fetchAllAssociative(), $expectedIds);
         $this->assertSame(1, $this->sqlLogger->currentQuery);
         $this->assertCount($expectedCountParameters, $this->sqlLogger->queries[1]['params']);
     }
 
     /**
      * @dataProvider getTestAddMultiFilterProvider
+     *
+     * @param QueryBuilderFilter::SELECT_* $filterSign
      */
     public function testAddMultiFilterORM(string $filterSign, array $filterValues, array $expectedIds, int $expectedCountParameters): void
     {
@@ -57,7 +64,9 @@ class QueryBuilderFilterTest extends AbstractTest
         QueryBuilderFilter::addMultiFilter($queryBuilder, $filterSign, $filterValues, 'e.entityId', 'entity_id');
         $query = $queryBuilder->getQuery();
 
-        $this->checkEntityIds($query->getResult(), $expectedIds);
+        /** @var iterable<object> $result */
+        $result = $query->getResult();
+        $this->checkEntityIds($result, $expectedIds);
         $this->assertSame(1, $this->sqlLogger->currentQuery);
         $this->assertCount($expectedCountParameters, $this->sqlLogger->queries[1]['params']);
     }
@@ -104,7 +113,7 @@ class QueryBuilderFilterTest extends AbstractTest
         $this->expectExceptionMessage('Bad filter sign');
 
         $queryBuilder = $this->createDefaultQueryBuilderDBAL();
-        QueryBuilderFilter::addMultiFilterWithRestrictValues($queryBuilder, 'bad', [], 'e.entity_id', 'entity_id', QueryBuilderFilter::SELECT_ALL, []);
+        QueryBuilderFilter::addMultiFilterWithRestrictValues($queryBuilder, 'bad', [], 'e.entity_id', 'entity_id', QueryBuilderFilter::SELECT_ALL, []); // @phpstan-ignore-line
     }
 
     public function testAddMultiFilterWithRestrictValuesBadFilterSignORM(): void
@@ -113,7 +122,7 @@ class QueryBuilderFilterTest extends AbstractTest
         $this->expectExceptionMessage('Bad filter sign');
 
         $queryBuilder = $this->createDefaultQueryBuilderORM();
-        QueryBuilderFilter::addMultiFilterWithRestrictValues($queryBuilder, 'bad', [], 'e.entity_id', 'entity_id', QueryBuilderFilter::SELECT_ALL, []);
+        QueryBuilderFilter::addMultiFilterWithRestrictValues($queryBuilder, 'bad', [], 'e.entity_id', 'entity_id', QueryBuilderFilter::SELECT_ALL, []); // @phpstan-ignore-line
     }
 
     public function testAddMultiFilterWithRestrictValuesBadRestrictFilterSignDBAL(): void
@@ -122,7 +131,7 @@ class QueryBuilderFilterTest extends AbstractTest
         $this->expectExceptionMessage('Bad filter sign');
 
         $queryBuilder = $this->createDefaultQueryBuilderDBAL();
-        QueryBuilderFilter::addMultiFilterWithRestrictValues($queryBuilder, QueryBuilderFilter::SELECT_IN, [], 'e.entity_id', 'entity_id', 'bad', []);
+        QueryBuilderFilter::addMultiFilterWithRestrictValues($queryBuilder, QueryBuilderFilter::SELECT_IN, [], 'e.entity_id', 'entity_id', 'bad', []); // @phpstan-ignore-line
     }
 
     public function testAddMultiFilterWithRestrictValuesBadRestrictFilterSignORM(): void
@@ -131,23 +140,31 @@ class QueryBuilderFilterTest extends AbstractTest
         $this->expectExceptionMessage('Bad filter sign');
 
         $queryBuilder = $this->createDefaultQueryBuilderORM();
-        QueryBuilderFilter::addMultiFilterWithRestrictValues($queryBuilder, QueryBuilderFilter::SELECT_IN, [], 'e.entity_id', 'entity_id', 'bad', []);
+        QueryBuilderFilter::addMultiFilterWithRestrictValues($queryBuilder, QueryBuilderFilter::SELECT_IN, [], 'e.entity_id', 'entity_id', 'bad', []); // @phpstan-ignore-line
     }
 
     /**
      * @dataProvider getTestAddMultiFilterWithRestrictValuesProvider
+     *
+     * @param QueryBuilderFilter::SELECT_* $filterSign
+     * @param QueryBuilderFilter::SELECT_* $restricSign
      */
     public function testAddMultiFilterWithRestrictValuesDBAL(string $filterSign, array $filterValues, string $restricSign, array $restrictValues, array $expectedIds): void
     {
         $queryBuilder = $this->createDefaultQueryBuilderDBAL();
         QueryBuilderFilter::addMultiFilterWithRestrictValues($queryBuilder, $filterSign, $filterValues, 'e.entity_id', 'entity_id', $restricSign, $restrictValues);
 
-        $this->checkEntityIds($queryBuilder->execute()->fetchAllAssociative(), $expectedIds);
+        /** @var Result $result */
+        $result = $queryBuilder->execute();
+        $this->checkEntityIds($result->fetchAllAssociative(), $expectedIds);
         $this->assertSame(1, $this->sqlLogger->currentQuery);
     }
 
     /**
      * @dataProvider getTestAddMultiFilterWithRestrictValuesProvider
+     *
+     * @param QueryBuilderFilter::SELECT_* $filterSign
+     * @param QueryBuilderFilter::SELECT_* $restricSign
      */
     public function testAddMultiFilterWithRestrictValuesORM(string $filterSign, array $filterValues, string $restricSign, array $restrictValues, array $expectedIds): void
     {
@@ -155,7 +172,9 @@ class QueryBuilderFilterTest extends AbstractTest
         QueryBuilderFilter::addMultiFilterWithRestrictValues($queryBuilder, $filterSign, $filterValues, 'e.entityId', 'entity_id', $restricSign, $restrictValues);
         $query = $queryBuilder->getQuery();
 
-        $this->checkEntityIds($query->getResult(), $expectedIds);
+        /** @var iterable<object> $result */
+        $result = $query->getResult();
+        $this->checkEntityIds($result, $expectedIds);
         $this->assertSame(1, $this->sqlLogger->currentQuery);
     }
 
@@ -287,12 +306,14 @@ class QueryBuilderFilterTest extends AbstractTest
     /**
      * @dataProvider getTestAddEqualFilterProvider
      */
-    public function testAddEqualFilterDBAL(bool $equal, $value, array $expectedIds, int $expectedCountParameters): void
+    public function testAddEqualFilterDBAL(bool $equal, mixed $value, array $expectedIds, int $expectedCountParameters): void
     {
         $queryBuilder = $this->createDefaultQueryBuilderDBAL();
         QueryBuilderFilter::addEqualFilter($queryBuilder, $equal, $value, 'e.entity_id', 'entity_id');
 
-        $this->checkEntityIds($queryBuilder->execute()->fetchAllAssociative(), $expectedIds);
+        /** @var Result $result */
+        $result = $queryBuilder->execute();
+        $this->checkEntityIds($result->fetchAllAssociative(), $expectedIds);
         $this->assertSame(1, $this->sqlLogger->currentQuery);
         $this->assertCount($expectedCountParameters, $this->sqlLogger->queries[1]['params']);
     }
@@ -300,13 +321,15 @@ class QueryBuilderFilterTest extends AbstractTest
     /**
      * @dataProvider getTestAddEqualFilterProvider
      */
-    public function testAddEqualFilterORM(bool $equal, $value, array $expectedIds, int $expectedCountParameters): void
+    public function testAddEqualFilterORM(bool $equal, mixed $value, array $expectedIds, int $expectedCountParameters): void
     {
         $queryBuilder = $this->createDefaultQueryBuilderORM();
         QueryBuilderFilter::addEqualFilter($queryBuilder, $equal, $value, 'e.entityId', 'entity_id');
         $query = $queryBuilder->getQuery();
 
-        $this->checkEntityIds($query->getResult(), $expectedIds);
+        /** @var iterable<object> $result */
+        $result = $query->getResult();
+        $this->checkEntityIds($result, $expectedIds);
         $this->assertSame(1, $this->sqlLogger->currentQuery);
         $this->assertCount($expectedCountParameters, $this->sqlLogger->queries[1]['params']);
     }
@@ -330,27 +353,35 @@ class QueryBuilderFilterTest extends AbstractTest
 
     /**
      * @dataProvider getTestAddComparatorFilterProvider
+     *
+     * @param '<'|'>'|'<='|'>=' $sign
      */
-    public function testAddComparatorFilterDBAL(string $sign, $value, array $expectedIds, int $expectedCountParameters): void
+    public function testAddComparatorFilterDBAL(string $sign, mixed $value, array $expectedIds, int $expectedCountParameters): void
     {
         $queryBuilder = $this->createDefaultQueryBuilderDBAL();
         QueryBuilderFilter::addComparatorFilter($queryBuilder, $sign, $value, 'e.entity_id', 'entity_id');
 
-        $this->checkEntityIds($queryBuilder->execute()->fetchAllAssociative(), $expectedIds);
+        /** @var Result $result */
+        $result = $queryBuilder->execute();
+        $this->checkEntityIds($result->fetchAllAssociative(), $expectedIds);
         $this->assertSame(1, $this->sqlLogger->currentQuery);
         $this->assertCount($expectedCountParameters, $this->sqlLogger->queries[1]['params']);
     }
 
     /**
      * @dataProvider getTestAddComparatorFilterProvider
+     *
+     * @param '<'|'>'|'<='|'>=' $sign
      */
-    public function testAddComparatorFilterORM(string $sign, $value, array $expectedIds, int $expectedCountParameters): void
+    public function testAddComparatorFilterORM(string $sign, mixed $value, array $expectedIds, int $expectedCountParameters): void
     {
         $queryBuilder = $this->createDefaultQueryBuilderORM();
         QueryBuilderFilter::addComparatorFilter($queryBuilder, $sign, $value, 'e.entityId', 'entity_id');
         $query = $queryBuilder->getQuery();
 
-        $this->checkEntityIds($query->getResult(), $expectedIds);
+        /** @var iterable<object> $result */
+        $result = $query->getResult();
+        $this->checkEntityIds($result, $expectedIds);
         $this->assertSame(1, $this->sqlLogger->currentQuery);
         $this->assertCount($expectedCountParameters, $this->sqlLogger->queries[1]['params']);
     }
@@ -373,7 +404,9 @@ class QueryBuilderFilterTest extends AbstractTest
         $queryBuilder = $this->createDefaultQueryBuilderDBAL();
         QueryBuilderFilter::addContainFilter($queryBuilder, $contain, $value, 'e.title', 'title');
 
-        $this->checkEntityIds($queryBuilder->execute()->fetchAllAssociative(), $expectedIds);
+        /** @var Result $result */
+        $result = $queryBuilder->execute();
+        $this->checkEntityIds($result->fetchAllAssociative(), $expectedIds);
         $this->assertSame(1, $this->sqlLogger->currentQuery);
         $this->assertCount($expectedCountParameters, $this->sqlLogger->queries[1]['params']);
     }
@@ -387,7 +420,9 @@ class QueryBuilderFilterTest extends AbstractTest
         QueryBuilderFilter::addContainFilter($queryBuilder, $contain, $value, 'e.title', 'title');
         $query = $queryBuilder->getQuery();
 
-        $this->checkEntityIds($query->getResult(), $expectedIds);
+        /** @var iterable<object> $result */
+        $result = $query->getResult();
+        $this->checkEntityIds($result, $expectedIds);
         $this->assertSame(1, $this->sqlLogger->currentQuery);
         $this->assertCount($expectedCountParameters, $this->sqlLogger->queries[1]['params']);
     }

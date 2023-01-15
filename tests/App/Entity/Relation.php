@@ -25,51 +25,51 @@ class Relation
      * @ORM\Id
      * @ORM\Column(type="integer", name="relation_id")
      */
-    protected $relationId;
+    protected ?int $relationId = null;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    protected $title;
+    protected ?string $title = null;
 
     /**
      * @ORM\ManyToOne(targetEntity="Ecommit\DoctrineUtils\Tests\App\Entity\Entity", inversedBy="relations")
      * @ORM\JoinColumn(name="entity_id", referencedColumnName="entity_id", nullable=false)
      */
-    protected $entity;
+    protected ?Entity $entity = null;
 
-    public function setRelationId(int $relationId): self
+    public function setRelationId(?int $relationId): self
     {
         $this->relationId = $relationId;
 
         return $this;
     }
 
-    public function getRelationId(): int
+    public function getRelationId(): ?int
     {
         return $this->relationId;
     }
 
-    public function setTitle(string $title): self
+    public function setTitle(?string $title): self
     {
         $this->title = $title;
 
         return $this;
     }
 
-    public function getTitle(): string
+    public function getTitle(): ?string
     {
         return $this->title;
     }
 
-    public function setEntity(Entity $entity = null): self
+    public function setEntity(?Entity $entity = null): self
     {
         $this->entity = $entity;
 
         return $this;
     }
 
-    public function getEntity(): Entity
+    public function getEntity(): ?Entity
     {
         return $this->entity;
     }

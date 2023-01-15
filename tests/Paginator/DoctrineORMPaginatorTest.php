@@ -13,17 +13,28 @@ declare(strict_types=1);
 
 namespace Ecommit\DoctrineUtils\Tests\Paginator;
 
+use Doctrine\ORM\QueryBuilder as QueryBuilderORM;
 use Ecommit\DoctrineUtils\Paginator\AbstractDoctrinePaginator;
 use Ecommit\DoctrineUtils\Paginator\DoctrineORMPaginator;
+use Ecommit\DoctrineUtils\Paginator\DoctrinePaginatorBuilder;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
+/**
+ * @phpstan-import-type PaginatorOptions from DoctrineORMPaginator
+ * @phpstan-import-type CountOptions from DoctrinePaginatorBuilder
+ *
+ * @template-extends AbstractDoctrinePaginatorTest<QueryBuilderORM, DoctrineORMPaginator, mixed, mixed, PaginatorOptions>
+ */
 class DoctrineORMPaginatorTest extends AbstractDoctrinePaginatorTest
 {
     /**
      * @dataProvider getTestCopySimplifiedRequestToCountOptionProvider
+     *
+     * @param int<0, max>|CountOptions $countOptionsExpected
      */
-    public function testCopySimplifiedRequestToCountOption(array $options, $countOptionsExpected): void
+    public function testCopySimplifiedRequestToCountOption(array $options, mixed $countOptionsExpected): void
     {
+        /** @var PaginatorOptions $options */
         $options = array_merge([
             'page' => 1,
             'max_per_page' => 5,
@@ -56,7 +67,7 @@ class DoctrineORMPaginatorTest extends AbstractDoctrinePaginatorTest
 
         $options = $this->getDefaultOptions();
         $options['simplified_request'] = 'bad';
-        $this->createPaginator($options);
+        $this->createPaginator($options); // @phpstan-ignore-line
     }
 
     public function testDefaultSimplifiedRequestOption(): void
@@ -87,7 +98,7 @@ class DoctrineORMPaginatorTest extends AbstractDoctrinePaginatorTest
 
         $options = $this->getDefaultOptions();
         $options['fetch_join_collection'] = 'bad';
-        $this->createPaginator($options);
+        $this->createPaginator($options); // @phpstan-ignore-line
     }
 
     public function testDefaultFetchJoinCollectionOption(): void
@@ -145,7 +156,9 @@ class DoctrineORMPaginatorTest extends AbstractDoctrinePaginatorTest
 
         $this->assertSame(2, $this->sqlLogger->currentQuery);
         $this->assertCount(52, $paginator);
-        $this->assertLessThan(5, \count($paginator->getIterator())); // Bad iterator
+        /** @var \ArrayIterator<int|string, object> $iterator */
+        $iterator = $paginator->getIterator();
+        $this->assertLessThan(5, \count($iterator)); // Bad iterator
         $this->checkIfQueryBuildNotChange($queryBuilder);
     }
 
@@ -209,7 +222,7 @@ class DoctrineORMPaginatorTest extends AbstractDoctrinePaginatorTest
         $this->checkIfQueryBuildNotChange($queryBuilder);
     }
 
-    protected function getDefaultQueryBuilder()
+    protected function getDefaultQueryBuilder(): mixed
     {
         return $this->createDefaultQueryBuilderORM();
     }

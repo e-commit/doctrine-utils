@@ -27,6 +27,7 @@ class DoctrinePaginatorBuilderTest extends AbstractTest
         $this->expectException(InvalidOptionsException::class);
         $this->expectExceptionMessage('"query_builder"');
 
+        // @phpstan-ignore-next-line
         DoctrinePaginatorBuilder::countQueryBuilder([
             'query_builder' => 'bad',
         ]);
@@ -35,11 +36,12 @@ class DoctrinePaginatorBuilderTest extends AbstractTest
     /**
      * @dataProvider getTestCountQueryBuilderDBALBadBehaviorProvider
      */
-    public function testCountQueryBuilderDBALBadBehavior($behavior): void
+    public function testCountQueryBuilderDBALBadBehavior(string $behavior): void
     {
         $this->expectException(InvalidOptionsException::class);
         $this->expectExceptionMessage('"behavior"');
 
+        // @phpstan-ignore-next-line
         DoctrinePaginatorBuilder::countQueryBuilder([
             'query_builder' => $this->createDefaultQueryBuilderDBAL(),
             'behavior' => $behavior,
@@ -59,6 +61,7 @@ class DoctrinePaginatorBuilderTest extends AbstractTest
         $this->expectException(InvalidOptionsException::class);
         $this->expectExceptionMessage('"behavior"');
 
+        // @phpstan-ignore-next-line
         DoctrinePaginatorBuilder::countQueryBuilder([
             'query_builder' => $this->createDefaultQueryBuilderORM(),
             'behavior' => 'bad',
@@ -90,6 +93,7 @@ class DoctrinePaginatorBuilderTest extends AbstractTest
         $this->expectException(InvalidOptionsException::class);
         $this->expectExceptionMessage('"alias"');
 
+        // @phpstan-ignore-next-line
         DoctrinePaginatorBuilder::countQueryBuilder([
             'query_builder' => $this->createDefaultQueryBuilderDBAL(),
             'behavior' => 'count_by_alias',
@@ -102,6 +106,7 @@ class DoctrinePaginatorBuilderTest extends AbstractTest
         $this->expectException(InvalidOptionsException::class);
         $this->expectExceptionMessage('"alias"');
 
+        // @phpstan-ignore-next-line
         DoctrinePaginatorBuilder::countQueryBuilder([
             'query_builder' => $this->createDefaultQueryBuilderORM(),
             'behavior' => 'count_by_alias',
@@ -151,6 +156,7 @@ class DoctrinePaginatorBuilderTest extends AbstractTest
         $this->expectException(InvalidOptionsException::class);
         $this->expectExceptionMessage('The "alias" option can only be used when "behavior" option is set to "count_by_alias"');
 
+        // @phpstan-ignore-next-line
         DoctrinePaginatorBuilder::countQueryBuilder([
             'query_builder' => $this->createDefaultQueryBuilderORM(),
             'behavior' => $behavior,
@@ -171,6 +177,7 @@ class DoctrinePaginatorBuilderTest extends AbstractTest
         $this->expectException(InvalidOptionsException::class);
         $this->expectExceptionMessage('"distinct_alias"');
 
+        // @phpstan-ignore-next-line
         DoctrinePaginatorBuilder::countQueryBuilder([
             'query_builder' => $this->createDefaultQueryBuilderDBAL(),
             'behavior' => 'count_by_alias',
@@ -184,6 +191,7 @@ class DoctrinePaginatorBuilderTest extends AbstractTest
         $this->expectException(InvalidOptionsException::class);
         $this->expectExceptionMessage('"distinct_alias"');
 
+        // @phpstan-ignore-next-line
         DoctrinePaginatorBuilder::countQueryBuilder([
             'query_builder' => $this->createDefaultQueryBuilderORM(),
             'behavior' => 'count_by_alias',
@@ -236,6 +244,7 @@ class DoctrinePaginatorBuilderTest extends AbstractTest
         $this->expectException(InvalidOptionsException::class);
         $this->expectExceptionMessage('The "distinct_alias" option can only be used when "behavior" option is set to "count_by_alias"');
 
+        // @phpstan-ignore-next-line
         DoctrinePaginatorBuilder::countQueryBuilder([
             'query_builder' => $this->createDefaultQueryBuilderORM(),
             'behavior' => $behavior,
@@ -248,6 +257,7 @@ class DoctrinePaginatorBuilderTest extends AbstractTest
         $this->expectException(InvalidOptionsException::class);
         $this->expectExceptionMessage('"simplified_request"');
 
+        // @phpstan-ignore-next-line
         DoctrinePaginatorBuilder::countQueryBuilder([
             'query_builder' => $this->createDefaultQueryBuilderORM(),
             'behavior' => 'orm',
@@ -285,6 +295,7 @@ class DoctrinePaginatorBuilderTest extends AbstractTest
         $this->expectException(InvalidOptionsException::class);
         $this->expectExceptionMessage('The "simplified_request" option can only be used when "behavior" option is set to "orm"');
 
+        // @phpstan-ignore-next-line
         DoctrinePaginatorBuilder::countQueryBuilder([
             'query_builder' => $this->createDefaultQueryBuilderORM(),
             'behavior' => $behavior,

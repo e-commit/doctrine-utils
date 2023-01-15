@@ -22,10 +22,7 @@ use Ecommit\DoctrineUtils\Tests\App\Entity\Relation;
 
 class Doctrine
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    protected static $entityManager;
+    protected static ?EntityManagerInterface $entityManager = null;
 
     public static function getEntityManager(): EntityManagerInterface
     {
@@ -80,6 +77,8 @@ class Doctrine
         $em->flush();
         $em->clear();
 
-        $em->getConfiguration()->getSQLLogger()->reset();
+        /** @var SqlLogger $sqlLogger */
+        $sqlLogger = $em->getConfiguration()->getSQLLogger();
+        $sqlLogger->reset();
     }
 }

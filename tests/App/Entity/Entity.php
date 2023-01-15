@@ -27,43 +27,45 @@ class Entity
      * @ORM\Id
      * @ORM\Column(type="integer", name="entity_id")
      */
-    protected $entityId;
+    protected ?int $entityId = null;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    protected $title;
+    protected ?string $title = null;
 
     /**
+     * @var Collection<array-key, Relation>
+     *
      * @ORM\OneToMany(targetEntity="Ecommit\DoctrineUtils\Tests\App\Entity\Relation", mappedBy="entity")
      */
-    protected $relations;
+    protected Collection $relations;
 
     public function __construct()
     {
         $this->relations = new ArrayCollection();
     }
 
-    public function setEntityId(int $entityId): self
+    public function setEntityId(?int $entityId): self
     {
         $this->entityId = $entityId;
 
         return $this;
     }
 
-    public function getEntityId(): int
+    public function getEntityId(): ?int
     {
         return $this->entityId;
     }
 
-    public function setTitle(string $title): self
+    public function setTitle(?string $title): self
     {
         $this->title = $title;
 
         return $this;
     }
 
-    public function getTitle(): string
+    public function getTitle(): ?string
     {
         return $this->title;
     }
@@ -84,6 +86,9 @@ class Entity
         return $this;
     }
 
+    /**
+     * @return Collection<array-key, Relation>
+     */
     public function getRelations(): Collection
     {
         return $this->relations;

@@ -119,6 +119,6 @@ jobs:
                 if: matrix.coding-standards
                 run: cat LICENSE |grep -E "\(c\) ([0-9]+\-)*`date +%G`"
 
-            -   name: Run Psalm
+            -   name: Run PHPStan
                 if: matrix.static-analysis
-                run: php vendor/bin/psalm --stats --output-format=github
+                run: php vendor/bin/phpstan --no-progress --error-format=github

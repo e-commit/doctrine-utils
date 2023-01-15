@@ -13,15 +13,36 @@ declare(strict_types=1);
 
 namespace Ecommit\DoctrineUtils\Tests\Paginator;
 
+use Doctrine\DBAL\Query\QueryBuilder as QueryBuilderDBAL;
+use Doctrine\ORM\QueryBuilder as QueryBuilderORM;
 use Ecommit\DoctrineUtils\Paginator\AbstractDoctrinePaginator;
+use Ecommit\DoctrineUtils\Paginator\DoctrineDBALPaginator;
+use Ecommit\DoctrineUtils\Paginator\DoctrineORMPaginator;
 use Ecommit\DoctrineUtils\Tests\AbstractTest;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 
+/**
+ * @template TQueryBuilder of QueryBuilderDBAL|QueryBuilderORM
+ * @template TPaginator of DoctrineDBALPaginator|DoctrineORMPaginator
+ * @template TKey
+ *
+ * @template-covariant TValue
+ *
+ * @template TOptions of array<string ,mixed>
+ */
 abstract class AbstractDoctrinePaginatorTest extends AbstractTest
 {
-    abstract protected function getDefaultQueryBuilder();
+    /**
+     * @return TQueryBuilder
+     */
+    abstract protected function getDefaultQueryBuilder(): mixed;
 
+    /**
+     * @param TOptions $options
+     *
+     * @return TPaginator
+     */
     abstract protected function createPaginator(array $options): AbstractDoctrinePaginator;
 
     public function testMissingQueryBuilderOption(): void
@@ -74,7 +95,16 @@ abstract class AbstractDoctrinePaginatorTest extends AbstractTest
         $this->createPaginator($options);
     }
 
-    protected function getDefaultOptions($page = 1, $perPage = 5, $queryBuilder = null): array
+    /**
+     * @param ?TQueryBuilder $queryBuilder
+     *
+     * @return array{
+     *     page: mixed,
+     *     max_per_page: int,
+     *     query_builder: TQueryBuilder
+     * }
+     */
+    protected function getDefaultOptions(mixed $page = 1, int $perPage = 5, QueryBuilderDBAL|QueryBuilderORM $queryBuilder = null): array
     {
         if (null === $queryBuilder) {
             $queryBuilder = $this->getDefaultQueryBuilder();
@@ -90,7 +120,7 @@ abstract class AbstractDoctrinePaginatorTest extends AbstractTest
     /**
      * @dataProvider getTestCountProvider
      */
-    public function testCount($page, int $maxPerPage, ?\Closure $queryBuilderUpdater, int $expectedValue): void
+    public function testCount(mixed $page, int $maxPerPage, ?\Closure $queryBuilderUpdater, int $expectedValue): void
     {
         $queryBuilder = $this->getDefaultQueryBuilder();
         if ($queryBuilderUpdater) {
@@ -166,7 +196,7 @@ abstract class AbstractDoctrinePaginatorTest extends AbstractTest
     /**
      * @dataProvider getTestItereatorWithoutIdentiferOptionProvider
      */
-    public function testItereatorWithoutByIdentiferOption($page, int $maxPerPage, array $expectedIds, string $expectedRegexSql): void
+    public function testItereatorWithoutByIdentiferOption(mixed $page, int $maxPerPage, array $expectedIds, string $expectedRegexSql): void
     {
         $queryBuilder = $this->getDefaultQueryBuilder();
         $this->saveQueryBuilder($queryBuilder);

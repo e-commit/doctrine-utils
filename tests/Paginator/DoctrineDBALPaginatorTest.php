@@ -13,9 +13,15 @@ declare(strict_types=1);
 
 namespace Ecommit\DoctrineUtils\Tests\Paginator;
 
+use Doctrine\DBAL\Query\QueryBuilder as QueryBuilderDBAL;
 use Ecommit\DoctrineUtils\Paginator\AbstractDoctrinePaginator;
 use Ecommit\DoctrineUtils\Paginator\DoctrineDBALPaginator;
 
+/**
+ * @phpstan-import-type PaginatorOptions from DoctrineDBALPaginator
+ *
+ * @template-extends AbstractDoctrinePaginatorTest<QueryBuilderDBAL, DoctrineDBALPaginator, mixed, mixed, PaginatorOptions>
+ */
 class DoctrineDBALPaginatorTest extends AbstractDoctrinePaginatorTest
 {
     public function testWithByIdentifierOption(): void
@@ -36,7 +42,7 @@ class DoctrineDBALPaginatorTest extends AbstractDoctrinePaginatorTest
         $this->checkIfQueryBuildNotChange($queryBuilder);
     }
 
-    protected function getDefaultQueryBuilder()
+    protected function getDefaultQueryBuilder(): mixed
     {
         return $this->createDefaultQueryBuilderDBAL();
     }

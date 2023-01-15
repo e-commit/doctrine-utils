@@ -30,10 +30,10 @@ class QueryBuilderFilter
     /**
      * Add SQL WHERE IN or WHERE NOT IN filter.
      *
-     * @param string $filterSign   ALL (no filter), IN (WHERE IN), NIN (WHERE NOT IN), AUT (WHERE IN if $filterValues is not empty. No filter else), NO (no result)
-     * @param array  $filterValues Values
-     * @param string $sqlField     SQL field name
-     * @param string $paramName    SQL parameter name
+     * @param self::SELECT_* $filterSign   ALL (no filter), IN (WHERE IN), NIN (WHERE NOT IN), AUT (WHERE IN if $filterValues is not empty. No filter else), NO (no result)
+     * @param array<mixed>   $filterValues Values
+     * @param string         $sqlField     SQL field name
+     * @param string         $paramName    SQL parameter name
      */
     final public static function addMultiFilter(QueryBuilderDBAL|QueryBuilderORM $queryBuilder, string $filterSign, array $filterValues, string $sqlField, string $paramName): QueryBuilderDBAL|QueryBuilderORM
     {
@@ -70,10 +70,10 @@ class QueryBuilderFilter
     /**
      * Add SQL WHERE IN or WHERE NOT IN filter without group.
      *
-     * @param string $filterSign   ALL (no filter), IN (WHERE IN), NIN (WHERE NOT IN), AUT (WHERE IN if $filterValues is not empty. No filter else), NO (no result)
-     * @param array  $filterValues Values
-     * @param string $sqlField     SQL field name
-     * @param string $paramName    SQL parameter name
+     * @param self::SELECT_* $filterSign   ALL (no filter), IN (WHERE IN), NIN (WHERE NOT IN), AUT (WHERE IN if $filterValues is not empty. No filter else), NO (no result)
+     * @param array<mixed>   $filterValues Values
+     * @param string         $sqlField     SQL field name
+     * @param string         $paramName    SQL parameter name
      */
     private static function addSimpleMultiFilter(QueryBuilderDBAL|QueryBuilderORM $queryBuilder, string $filterSign, array $filterValues, string $sqlField, string $paramName): QueryBuilderDBAL|QueryBuilderORM
     {
@@ -88,10 +88,10 @@ class QueryBuilderFilter
     /**
      * Add SQL WHERE IN or WHERE NOT IN filter with group.
      *
-     * @param string $filterSign   ALL (no filter), IN (WHERE IN), NIN (WHERE NOT IN), AUT (WHERE IN if $filterValues is not empty. No filter else), NO (no result)
-     * @param array  $filterValues Values
-     * @param string $sqlField     SQL field name
-     * @param string $paramName    SQL parameter name
+     * @param self::SELECT_* $filterSign   ALL (no filter), IN (WHERE IN), NIN (WHERE NOT IN), AUT (WHERE IN if $filterValues is not empty. No filter else), NO (no result)
+     * @param array<mixed>   $filterValues Values
+     * @param string         $sqlField     SQL field name
+     * @param string         $paramName    SQL parameter name
      */
     private static function addGroupMultiFilter(QueryBuilderDBAL|QueryBuilderORM $queryBuilder, string $filterSign, array $filterValues, string $sqlField, string $paramName): QueryBuilderDBAL|QueryBuilderORM
     {
@@ -114,12 +114,12 @@ class QueryBuilderFilter
     /**
      * Add SQL WHERE IN or WHERE NOT IN filter. And result MUST BE in the whitelist (if $restrictSign=IN) or MUST NOT BE in the blacklist (if $restrictSign=NIN).
      *
-     * @param string $filterSign     ALL (no filter), IN (WHERE IN), NIN (WHERE NOT IN), AUT (WHERE IN if $filterValues is not empty. No filter else), NO (no result)
-     * @param array  $filterValues   Values
-     * @param string $sqlField       SQL field name
-     * @param string $paramName      SQL parameter name
-     * @param string $restrictSign   IN (WHERE IN), NIN (WHERE NOT IN), AUT (WHERE IN if $restrictValues is not empty. No filter else), NO (no result)
-     * @param array  $restrictValues Whitelist (if $restrictSign=IN or AUT) or blacklist (if $restrictSign=NIN)
+     * @param self::SELECT_* $filterSign     ALL (no filter), IN (WHERE IN), NIN (WHERE NOT IN), AUT (WHERE IN if $filterValues is not empty. No filter else), NO (no result)
+     * @param array<mixed>   $filterValues   Values
+     * @param string         $sqlField       SQL field name
+     * @param string         $paramName      SQL parameter name
+     * @param self::SELECT_* $restrictSign   IN (WHERE IN), NIN (WHERE NOT IN), AUT (WHERE IN if $restrictValues is not empty. No filter else), NO (no result)
+     * @param array<mixed>   $restrictValues Whitelist (if $restrictSign=IN or AUT) or blacklist (if $restrictSign=NIN)
      */
     final public static function addMultiFilterWithRestrictValues(QueryBuilderDBAL|QueryBuilderORM $queryBuilder, string $filterSign, array $filterValues, string $sqlField, string $paramName, string $restrictSign, array $restrictValues): QueryBuilderDBAL|QueryBuilderORM
     {
@@ -190,10 +190,10 @@ class QueryBuilderFilter
     /**
      * Add SQL comparator filter.
      *
-     * @param string $sign        Comparator sign (< > <= >=)
-     * @param mixed  $filterValue Value
-     * @param string $sqlField    SQL field name
-     * @param string $paramName   SQL parameter name
+     * @param '<'|'>'|'<='|'>=' $sign        Comparator sign (< > <= >=)
+     * @param mixed             $filterValue Value
+     * @param string            $sqlField    SQL field name
+     * @param string            $paramName   SQL parameter name
      */
     final public static function addComparatorFilter(QueryBuilderDBAL|QueryBuilderORM $queryBuilder, string $sign, $filterValue, string $sqlField, string $paramName): QueryBuilderDBAL|QueryBuilderORM
     {

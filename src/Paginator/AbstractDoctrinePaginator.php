@@ -18,6 +18,16 @@ use Doctrine\ORM\QueryBuilder as QueryBuilderORM;
 use Ecommit\Paginator\AbstractPaginator;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @template TKey
+ *
+ * @template-covariant TValue
+ *
+ * @template TOptions of array<string ,mixed>
+ * @template TResolvedOptions of array<string ,mixed>
+ *
+ * @template-extends AbstractPaginator<TKey, TValue, TOptions, TResolvedOptions>
+ */
 abstract class AbstractDoctrinePaginator extends AbstractPaginator
 {
     final protected function setOffsetAndLimit(QueryBuilderDBAL|QueryBuilderORM $queryBuilder): void

@@ -20,6 +20,30 @@ use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @phpstan-import-type CountOptions from DoctrinePaginatorBuilder
+ *
+ * @phpstan-type PaginatorOptions array{
+ *      page?: mixed,
+ *      max_per_page?: int,
+ *      query_builder: QueryBuilder,
+ *      by_identifier?: ?string,
+ *      count?: int<0, max>|CountOptions,
+ *      simplified_request?: ?bool,
+ *      fetch_join_collection?: ?bool
+ * }
+ * @phpstan-type PaginatorResolvedOptions array{
+ *      page: int<0, max>,
+ *      max_per_page: int<0, max>,
+ *      query_builder: QueryBuilder,
+ *      by_identifier: ?string,
+ *      count: int<0, max>|CountOptions,
+ *      simplified_request: ?bool,
+ *      fetch_join_collection: ?bool
+ * }
+ *
+ * @template-extends AbstractDoctrinePaginator<mixed, mixed, PaginatorOptions, PaginatorResolvedOptions>
+ */
 final class DoctrineORMPaginator extends AbstractDoctrinePaginator
 {
     protected function buildCount(): int
@@ -44,17 +68,22 @@ final class DoctrineORMPaginator extends AbstractDoctrinePaginator
         /** @var QueryBuilder $queryBuilder */
         $queryBuilder = clone $this->getOption('query_builder');
 
-        if (null === $this->getOption('by_identifier')) {
+        $byIdentifier = $this->getOption('by_identifier');
+        if (null === $byIdentifier) {
             $this->setOffsetAndLimit($queryBuilder);
+            /** @var bool $fetchJoinCollection */
+            $fetchJoinCollection = $this->getOption('fetch_join_collection');
+            /** @var bool $simplifiedRequest */
+            $simplifiedRequest = $this->getOption('simplified_request');
 
-            $doctrinePaginator = new Paginator($queryBuilder, $this->getOption('fetch_join_collection'));
-            $doctrinePaginator->setUseOutputWalkers(!$this->getOption('simplified_request'));
+            $doctrinePaginator = new Paginator($queryBuilder, $fetchJoinCollection);
+            $doctrinePaginator->setUseOutputWalkers(!$simplifiedRequest);
 
             return $doctrinePaginator->getIterator();
         }
 
         $idsQueryBuilder = clone $queryBuilder;
-        $idsQueryBuilder->select(sprintf('DISTINCT %s as pk', $this->getOption('by_identifier')));
+        $idsQueryBuilder->select(sprintf('DISTINCT %s as pk', $byIdentifier));
         $this->setOffsetAndLimit($idsQueryBuilder);
         $doctrinePaginator = new Paginator($idsQueryBuilder, false);
         $doctrinePaginator->setUseOutputWalkers(true);
@@ -63,9 +92,13 @@ final class DoctrineORMPaginator extends AbstractDoctrinePaginator
         $resultsByIdsQueryBuilder = clone $queryBuilder;
         $resultsByIdsQueryBuilder->resetDQLPart('where');
         $resultsByIdsQueryBuilder->setParameters([]);
-        QueryBuilderFilter::addMultiFilter($resultsByIdsQueryBuilder, QueryBuilderFilter::SELECT_IN, $ids, $this->getOption('by_identifier'), 'paginate_pks');
+        QueryBuilderFilter::addMultiFilter($resultsByIdsQueryBuilder, QueryBuilderFilter::SELECT_IN, $ids, $byIdentifier, 'paginate_pks');
+        $result = $resultsByIdsQueryBuilder->getQuery()->getResult();
+        if (!\is_array($result)) {
+            throw new \Exception('Array expected');
+        }
 
-        return new \ArrayIterator($resultsByIdsQueryBuilder->getQuery()->getResult());
+        return new \ArrayIterator($result);
     }
 
     protected function configureOptions(OptionsResolver $resolver): void
@@ -80,7 +113,9 @@ final class DoctrineORMPaginator extends AbstractDoctrinePaginator
             if (\is_int($count)) {
                 return $count;
             }
-            $countBehavior = (isset($count['behavior'])) ? $count['behavior'] : DoctrinePaginatorBuilder::getDefaultCountBehavior($options['query_builder']);
+            /** @var QueryBuilder $queryBuilder */
+            $queryBuilder = $options['query_builder'];
+            $countBehavior = (isset($count['behavior'])) ? $count['behavior'] : DoctrinePaginatorBuilder::getDefaultCountBehavior($queryBuilder);
             if ('orm' === $countBehavior && !isset($count['simplified_request'])) {
                 $count['simplified_request'] = $options['simplified_request'];
             }
