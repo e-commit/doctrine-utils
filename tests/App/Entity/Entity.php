@@ -19,12 +19,14 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
+ *
  * @ORM\Table(name="entity")
  */
 class Entity
 {
     /**
      * @ORM\Id
+     *
      * @ORM\Column(type="integer", name="entity_id")
      */
     protected ?int $entityId = null;

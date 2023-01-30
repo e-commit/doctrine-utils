@@ -17,12 +17,14 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
+ *
  * @ORM\Table(name="relation")
  */
 class Relation
 {
     /**
      * @ORM\Id
+     *
      * @ORM\Column(type="integer", name="relation_id")
      */
     protected ?int $relationId = null;
@@ -34,6 +36,7 @@ class Relation
 
     /**
      * @ORM\ManyToOne(targetEntity="Ecommit\DoctrineUtils\Tests\App\Entity\Entity", inversedBy="relations")
+     *
      * @ORM\JoinColumn(name="entity_id", referencedColumnName="entity_id", nullable=false)
      */
     protected ?Entity $entity = null;
