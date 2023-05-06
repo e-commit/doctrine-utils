@@ -98,11 +98,7 @@ abstract class AbstractDoctrinePaginatorTest extends AbstractTest
     /**
      * @param ?TQueryBuilder $queryBuilder
      *
-     * @return array{
-     *     page: mixed,
-     *     max_per_page: int,
-     *     query_builder: TQueryBuilder
-     * }
+     * @return TOptions
      */
     protected function getDefaultOptions(mixed $page = 1, int $perPage = 5, QueryBuilderDBAL|QueryBuilderORM $queryBuilder = null): array
     {
@@ -110,11 +106,14 @@ abstract class AbstractDoctrinePaginatorTest extends AbstractTest
             $queryBuilder = $this->getDefaultQueryBuilder();
         }
 
-        return [
+        /** @var TOptions $options */
+        $options = [
             'page' => $page,
             'max_per_page' => $perPage,
             'query_builder' => $queryBuilder,
         ];
+
+        return $options;
     }
 
     /**
