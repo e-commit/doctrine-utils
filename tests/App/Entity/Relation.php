@@ -65,7 +65,7 @@ class Relation
         return $this->title;
     }
 
-    public function setEntity(?Entity $entity = null): self
+    public function setEntity(Entity $entity = null): self
     {
         $this->entity = $entity;
 
