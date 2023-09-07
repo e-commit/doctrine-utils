@@ -217,7 +217,7 @@ class DoctrinePaginatorBuilder
             $countQueryBuilder->select(sprintf('count(%s%s)', $distinct, $options['alias']));
             $countQueryBuilder->resetDQLPart('orderBy');
             /** @var int<0, max> $count */
-            $count = (int) $countQueryBuilder->getQuery()->getSingleScalarResult(); // @phpstan-ignore-line
+            $count = (int) $countQueryBuilder->getQuery()->getSingleScalarResult();
 
             return $count;
         }
