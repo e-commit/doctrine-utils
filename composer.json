@@ -23,6 +23,7 @@
         "symfony/options-resolver": "^4.4|^5.4|^6.0"
     },
     "require-dev": {
+        "doctrine/annotations": "*",
         "doctrine/orm": "*",
         "friendsofphp/php-cs-fixer": "^3.0",
         "phpstan/phpstan": "^1.9",
