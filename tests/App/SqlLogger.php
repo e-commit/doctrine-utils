@@ -30,7 +30,7 @@ class SqlLogger implements BaseSQLLogger
     /** @var int */
     public $currentQuery = 0;
 
-    public function startQuery($sql, array $params = null, array $types = null): void
+    public function startQuery($sql, ?array $params = null, ?array $types = null): void
     {
         if (null === $params) {
             $params = [];

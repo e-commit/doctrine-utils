@@ -100,7 +100,7 @@ abstract class AbstractDoctrinePaginatorTest extends AbstractTest
      *
      * @return TOptions
      */
-    protected function getDefaultOptions(mixed $page = 1, int $perPage = 5, QueryBuilderDBAL|QueryBuilderORM $queryBuilder = null): array
+    protected function getDefaultOptions(mixed $page = 1, int $perPage = 5, QueryBuilderDBAL|QueryBuilderORM|null $queryBuilder = null): array
     {
         if (null === $queryBuilder) {
             $queryBuilder = $this->getDefaultQueryBuilder();

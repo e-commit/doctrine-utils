@@ -282,7 +282,7 @@ class DoctrinePaginatorBuilderTest extends AbstractTest
         $this->expectExceptionMessage('The "simplified_request" option can only be used with ORM QueryBuilder');
 
         DoctrinePaginatorBuilder::countQueryBuilder([
-        'query_builder' => $this->createDefaultQueryBuilderDBAL(),
+            'query_builder' => $this->createDefaultQueryBuilderDBAL(),
             'simplified_request' => true,
         ]);
     }
