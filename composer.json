@@ -25,7 +25,7 @@
     "require-dev": {
         "doctrine/orm": "*",
         "friendsofphp/php-cs-fixer": "^3.0",
-        "phpstan/phpstan": "^1.9",
+        "phpstan/phpstan": "^2.0",
         "phpunit/phpunit": "^9.3",
         "symfony/cache": "*"
     },

@@ -136,7 +136,7 @@ abstract class AbstractDoctrinePaginatorTest extends AbstractTest
 
     public function getTestCountProvider(): array
     {
-        $queryBuilderUpdaterNoData = function ($queryBuilder): void {
+        $queryBuilderUpdaterNoData = function (QueryBuilderDBAL|QueryBuilderORM $queryBuilder): void {
             $queryBuilder->andWhere('0 = 1');
         };
 
