@@ -154,7 +154,7 @@ class DoctrinePaginatorBuilder
             $countQueryBuilder = clone $queryBuilder;
 
             $distinct = ($options['distinct_alias']) ? 'DISTINCT ' : '';
-            $countQueryBuilder->select(sprintf('count(%s%s)', $distinct, $options['alias']));
+            $countQueryBuilder->select(\sprintf('count(%s%s)', $distinct, $options['alias']));
             $countQueryBuilder->resetQueryPart('orderBy');
             $result = $countQueryBuilder->execute();
             if (!$result instanceof Result) {
@@ -214,7 +214,7 @@ class DoctrinePaginatorBuilder
             $countQueryBuilder = clone $queryBuilder;
 
             $distinct = ($options['distinct_alias']) ? 'DISTINCT ' : '';
-            $countQueryBuilder->select(sprintf('count(%s%s)', $distinct, $options['alias']));
+            $countQueryBuilder->select(\sprintf('count(%s%s)', $distinct, $options['alias']));
             $countQueryBuilder->resetDQLPart('orderBy');
             /** @var int<0, max> $count */
             $count = (int) $countQueryBuilder->getQuery()->getSingleScalarResult();
@@ -232,7 +232,7 @@ class DoctrinePaginatorBuilder
         }
         $rsm = new ResultSetMapping();
         $rsm->addScalarResult('cnt', 'cnt');
-        $countSql = sprintf('SELECT count(*) as cnt FROM (%s) mainquery', $sql);
+        $countSql = \sprintf('SELECT count(*) as cnt FROM (%s) mainquery', $sql);
         $countQuery = $queryBuilder->getEntityManager()->createNativeQuery($countSql, $rsm);
         $i = 0;
         foreach ($queryBuilder->getParameters() as $parameter) {

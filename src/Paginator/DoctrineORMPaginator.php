@@ -83,7 +83,7 @@ final class DoctrineORMPaginator extends AbstractDoctrinePaginator
         }
 
         $idsQueryBuilder = clone $queryBuilder;
-        $idsQueryBuilder->select(sprintf('DISTINCT %s as pk', $byIdentifier));
+        $idsQueryBuilder->select(\sprintf('DISTINCT %s as pk', $byIdentifier));
         $this->setOffsetAndLimit($idsQueryBuilder);
         $doctrinePaginator = new Paginator($idsQueryBuilder, false);
         $doctrinePaginator->setUseOutputWalkers(true);

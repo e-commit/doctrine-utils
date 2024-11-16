@@ -74,7 +74,7 @@ final class DoctrineDBALPaginator extends AbstractDoctrinePaginator
         }
 
         $idsQueryBuilder = clone $queryBuilder;
-        $idsQueryBuilder->select(sprintf('DISTINCT %s as pk', $this->getOption('by_identifier')));
+        $idsQueryBuilder->select(\sprintf('DISTINCT %s as pk', $this->getOption('by_identifier')));
         $this->setOffsetAndLimit($idsQueryBuilder);
         $result = $idsQueryBuilder->execute();
         if (!$result instanceof Result) {

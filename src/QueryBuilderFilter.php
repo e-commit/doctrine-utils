@@ -79,7 +79,7 @@ class QueryBuilderFilter
     {
         $clauseSql = (self::SELECT_IN === $filterSign || self::SELECT_AUTO === $filterSign) ? 'IN' : 'NOT IN';
 
-        $queryBuilder->andWhere(sprintf('%s %s (:%s)', $sqlField, $clauseSql, $paramName));
+        $queryBuilder->andWhere(\sprintf('%s %s (:%s)', $sqlField, $clauseSql, $paramName));
         $queryBuilder->setParameter($paramName, $filterValues, Connection::PARAM_STR_ARRAY);
 
         return $queryBuilder;
@@ -102,7 +102,7 @@ class QueryBuilderFilter
         $groups = [];
         foreach (array_chunk($filterValues, self::MAX_PER_IN) as $filterValuesGroup) {
             ++$groupNumber;
-            $groups[] = sprintf('%s %s (:%s%s)', $sqlField, $clauseSql, $paramName, $groupNumber);
+            $groups[] = \sprintf('%s %s (:%s%s)', $sqlField, $clauseSql, $paramName, $groupNumber);
             $queryBuilder->setParameter($paramName.$groupNumber, $filterValuesGroup, Connection::PARAM_STR_ARRAY);
         }
 
@@ -201,7 +201,7 @@ class QueryBuilderFilter
             return $queryBuilder;
         }
 
-        $queryBuilder->andWhere(sprintf('%s %s :%s', $sqlField, $sign, $paramName));
+        $queryBuilder->andWhere(\sprintf('%s %s :%s', $sqlField, $sign, $paramName));
         $queryBuilder->setParameter($paramName, $filterValue);
 
         return $queryBuilder;
