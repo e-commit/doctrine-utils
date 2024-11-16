@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Ecommit\DoctrineUtils\Paginator;
 
 use Doctrine\DBAL\Query\QueryBuilder;
-use Doctrine\DBAL\Result;
 use Ecommit\DoctrineUtils\QueryBuilderFilter;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -65,10 +64,7 @@ final class DoctrineDBALPaginator extends AbstractDoctrinePaginator
         $byIdentifier = $this->getOption('by_identifier');
         if (null === $byIdentifier) {
             $this->setOffsetAndLimit($queryBuilder);
-            $result = $queryBuilder->execute();
-            if (!$result instanceof Result) {
-                throw new \Exception('Expected class : '.Result::class);
-            }
+            $result = $queryBuilder->executeQuery();
 
             return new \ArrayIterator($result->fetchAllAssociative());
         }
@@ -76,21 +72,15 @@ final class DoctrineDBALPaginator extends AbstractDoctrinePaginator
         $idsQueryBuilder = clone $queryBuilder;
         $idsQueryBuilder->select(\sprintf('DISTINCT %s as pk', $this->getOption('by_identifier')));
         $this->setOffsetAndLimit($idsQueryBuilder);
-        $result = $idsQueryBuilder->execute();
-        if (!$result instanceof Result) {
-            throw new \Exception('Expected class : '.Result::class);
-        }
+        $result = $idsQueryBuilder->executeQuery();
 
         $ids = $result->fetchFirstColumn();
 
         $resultsByIdsQueryBuilder = clone $queryBuilder;
-        $resultsByIdsQueryBuilder->resetQueryPart('where');
+        $resultsByIdsQueryBuilder->resetWhere();
         $resultsByIdsQueryBuilder->setParameters([]);
         QueryBuilderFilter::addMultiFilter($resultsByIdsQueryBuilder, QueryBuilderFilter::SELECT_IN, $ids, $byIdentifier, 'paginate_pks');
-        $result = $resultsByIdsQueryBuilder->execute();
-        if (!$result instanceof Result) {
-            throw new \Exception('Expected class : '.Result::class);
-        }
+        $result = $resultsByIdsQueryBuilder->executeQuery();
 
         return new \ArrayIterator($result->fetchAllAssociative());
     }

@@ -173,6 +173,9 @@ abstract class AbstractDoctrinePaginatorTest extends AbstractTest
         $options['count'] = [
             'behavior' => 'count_by_sub_request',
         ];
+        if ($queryBuilder instanceof QueryBuilderDBAL) {
+            $options['count']['connection'] = $this->em->getConnection();
+        }
         $paginator = $this->createPaginator($options);
 
         $this->assertCount(52, $paginator);

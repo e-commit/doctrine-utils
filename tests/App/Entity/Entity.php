@@ -17,30 +17,21 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity
- *
- * @ORM\Table(name="entity")
- */
+#[ORM\Entity]
+#[ORM\Table(name: 'entity')]
 class Entity
 {
-    /**
-     * @ORM\Id
-     *
-     * @ORM\Column(type="integer", name="entity_id")
-     */
+    #[ORM\Id]
+    #[ORM\Column(type: 'integer', name: 'entity_id')]
     protected ?int $entityId = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: 'string', length: 255)]
     protected ?string $title = null;
 
     /**
      * @var Collection<array-key, Relation>
-     *
-     * @ORM\OneToMany(targetEntity="Ecommit\DoctrineUtils\Tests\App\Entity\Relation", mappedBy="entity")
      */
+    #[ORM\OneToMany(targetEntity: Relation::class, mappedBy: 'entity')]
     protected Collection $relations;
 
     public function __construct()

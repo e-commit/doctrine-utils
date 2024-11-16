@@ -18,7 +18,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder as QueryBuilderORM;
 use Ecommit\DoctrineUtils\Tests\App\Doctrine;
 use Ecommit\DoctrineUtils\Tests\App\Entity\Entity;
-use Ecommit\DoctrineUtils\Tests\App\SqlLogger;
+use Ecommit\DoctrineUtils\Tests\App\Logging\SqlLogger;
 use PHPUnit\Framework\TestCase;
 
 abstract class AbstractTest extends TestCase
@@ -30,9 +30,7 @@ abstract class AbstractTest extends TestCase
     protected function setUp(): void
     {
         $this->em = Doctrine::getEntityManager();
-        /** @var SqlLogger $sqlLogger */
-        $sqlLogger = $this->em->getConnection()->getConfiguration()->getSQLLogger();
-        $this->sqlLogger = $sqlLogger;
+        $this->sqlLogger = Doctrine::getLogger();
     }
 
     protected function tearDown(): void

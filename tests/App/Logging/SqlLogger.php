@@ -11,12 +11,12 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Ecommit\DoctrineUtils\Tests\App;
+namespace Ecommit\DoctrineUtils\Tests\App\Logging;
 
-use Doctrine\DBAL\Logging\SQLLogger as BaseSQLLogger;
 use Doctrine\DBAL\Types\Type;
+use Psr\Log\AbstractLogger;
 
-class SqlLogger implements BaseSQLLogger
+class SqlLogger extends AbstractLogger
 {
     /**
      * @var array<int, array{
@@ -30,21 +30,22 @@ class SqlLogger implements BaseSQLLogger
     /** @var int */
     public $currentQuery = 0;
 
-    public function startQuery($sql, ?array $params = null, ?array $types = null): void
+    public function log($level, $message, array $context = []): void
     {
-        if (null === $params) {
-            $params = [];
+        $params = [];
+        $types = [];
+        if (\array_key_exists('params', $context)) {
+            $params = $context['params'];
+        }
+        if (\array_key_exists('types', $context)) {
+            $types = $context['types'];
         }
 
         $this->queries[++$this->currentQuery] = [
-            'sql' => $sql,
+            'sql' => (string) $message,
             'params' => $params,
             'types' => $types,
         ];
-    }
-
-    public function stopQuery(): void
-    {
     }
 
     public function reset(): void

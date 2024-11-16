@@ -15,13 +15,13 @@ $count = DoctrinePaginatorBuilder::countQueryBuilder([
 
 **Available options :**
 
-| Option | Type | Required | Default value | Description |
-| --- | --- | --- | --- | --- |
-| **query_builder** | `Doctrine\DBAL\Query\QueryBuilder` | Yes |  | QueryBuilder |
-| **behavior** | String | No | `count_by_sub_request` | Method used to count results. Available values: <ul><li>`count_by_alias`: Use a alias (`SELECT count(alias) FROM ...`) *(`alias` option is required)*</li><li>`count_by_sub_request` : Use a sub request</li></ul> |
-| **alias** | String | Only if `behavior = count_by_alias` | | Can only be used when `behavior = count_by_alias` |
-| **distinct_alias** | Bool | No | `true` | Use `DISTINCT` (`SELECT count(DISTINCT alias) FROM ...`). Can only be used when `behavior = count_by_alias` |
-
+| Option             | Type | Required | Default value | Description                                                                                                                                                                                                                                                                                                           |
+|--------------------| --- | --- | --- |-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **query_builder**  | `Doctrine\DBAL\Query\QueryBuilder` | Yes |  | QueryBuilder                                                                                                                                                                                                                                                                                                          |
+| **behavior**       | String | No | `count_by_select_all` | Method used to count results. Available values: <ul><li>`count_by_alias`: Use a alias (`SELECT count(alias) FROM ...`) *(`alias` option is required)*</li><li>`count_by_sub_request` : Use a sub request *(`connection` option is required)*</li><li>`count_by_select_all`: Use `SELECT count(*) FROM ...`)</li></ul> |
+| **alias**          | String | Only if `behavior = count_by_alias` | | Can only be used when `behavior = count_by_alias`                                                                                                                                                                                                                                                                     |
+| **distinct_alias** | Bool | No | `true` | Use `DISTINCT` (`SELECT count(DISTINCT alias) FROM ...`). Can only be used when `behavior = count_by_alias`                                                                                                                                                                                                           |
+| **connection**     | `Doctrine\DBAL\Connection` | Only if `behavior = count_by_sub_request` | | Can only be used when `behavior = count_by_sub_request`                                                                                                                                                                                                                                                                     |
 
 
 ## With ORM QueryBuilder

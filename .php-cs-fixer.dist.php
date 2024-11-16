@@ -11,6 +11,7 @@ COMMENT;
 
 $finder = PhpCsFixer\Finder::create()
     ->in(__DIR__)
+    ->exclude('tests/App/Logging') // Compatibility DBAL 3/4
 ;
 $config = new PhpCsFixer\Config();
 
@@ -19,8 +20,8 @@ return $config->setRiskyAllowed(true)
         '@Symfony' => true,
         '@Symfony:risky' => true,
         '@DoctrineAnnotation' => true,
-        '@PHP80Migration' => true,
-        '@PHP74Migration:risky' => true,
+        '@PHP81Migration' => true,
+        '@PHP80Migration:risky' => true,
         '@PHPUnit84Migration:risky' => true,
         'array_syntax' => ['syntax' => 'short'],
         'fopen_flags' => true,

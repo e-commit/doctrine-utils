@@ -6,3 +6,7 @@ parameters:
         -
             message: '#expects TOptions of array<string, mixed>, array<string, mixed> given#'
             path: tests/
+
+    excludePaths:
+        # Compatibility DBAL 3/4
+        - tests/App/Logging

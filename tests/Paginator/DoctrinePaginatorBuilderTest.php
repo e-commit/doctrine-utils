@@ -56,7 +56,10 @@ class DoctrinePaginatorBuilderTest extends AbstractTest
         ];
     }
 
-    public function testCountQueryBuilderORMBadBehavior(): void
+    /**
+     * @dataProvider getTestCountQueryBuilderORMBadBehaviorProvider
+     */
+    public function testCountQueryBuilderORMBadBehavior(string $behavior): void
     {
         $this->expectException(InvalidOptionsException::class);
         $this->expectExceptionMessage('"behavior"');
@@ -64,18 +67,28 @@ class DoctrinePaginatorBuilderTest extends AbstractTest
         // @phpstan-ignore-next-line
         DoctrinePaginatorBuilder::countQueryBuilder([
             'query_builder' => $this->createDefaultQueryBuilderORM(),
-            'behavior' => 'bad',
+            'behavior' => $behavior,
         ]);
+    }
+
+    public function getTestCountQueryBuilderORMBadBehaviorProvider(): array
+    {
+        return [
+            ['bad'],
+            ['count_by_select_all'],
+        ];
     }
 
     public function testCountQueryBuilderDBALDefaultBehavior(): void
     {
         DoctrinePaginatorBuilder::countQueryBuilder([
             'query_builder' => $this->createDefaultQueryBuilderDBAL(),
+            'connection' => $this->em->getConnection(),
         ]);
 
         $this->assertSame(1, $this->sqlLogger->currentQuery);
-        $this->assertStringContainsStringIgnoringCase('mainquery', $this->sqlLogger->queries[1]['sql']);
+        $this->assertStringContainsStringIgnoringCase('SELECT count(*)', $this->sqlLogger->queries[1]['sql']);
+        $this->assertStringNotContainsStringIgnoringCase('mainquery', $this->sqlLogger->queries[1]['sql']);
     }
 
     public function testCountQueryBuilderORMDefaultBehavior(): void
@@ -145,6 +158,7 @@ class DoctrinePaginatorBuilderTest extends AbstractTest
             'query_builder' => $this->createDefaultQueryBuilderDBAL(),
             'behavior' => 'count_by_sub_request',
             'alias' => 'alias',
+            'connection' => $this->em->getConnection(),
         ]);
     }
 
@@ -233,6 +247,7 @@ class DoctrinePaginatorBuilderTest extends AbstractTest
             'query_builder' => $this->createDefaultQueryBuilderDBAL(),
             'behavior' => 'count_by_sub_request',
             'distinct_alias' => true,
+            'connection' => $this->em->getConnection(),
         ]);
     }
 
@@ -312,6 +327,41 @@ class DoctrinePaginatorBuilderTest extends AbstractTest
         ];
     }
 
+    public function testCountQueryBuilderDBALCountBySubRequestMissingConnectionOption(): void
+    {
+        $this->expectException(MissingOptionsException::class);
+        $this->expectExceptionMessage('When "behavior" option is set to "count_by_sub_request" with DBAL QueryBuilder, "connection" option is required');
+
+        DoctrinePaginatorBuilder::countQueryBuilder([
+            'query_builder' => $this->createDefaultQueryBuilderDBAL(),
+            'behavior' => 'count_by_sub_request',
+        ]);
+    }
+
+    public function testCountQueryBuilderDBALCountBySubRequestBadConnectionOption(): void
+    {
+        $this->expectException(InvalidOptionsException::class);
+        $this->expectExceptionMessage('"connection"');
+
+        // @phpstan-ignore-next-line
+        DoctrinePaginatorBuilder::countQueryBuilder([
+            'query_builder' => $this->createDefaultQueryBuilderDBAL(),
+            'behavior' => 'count_by_sub_request',
+            'connection' => [],
+        ]);
+    }
+
+    public function testCountQueryBuilderORMConnectionOptionNotAllowed(): void
+    {
+        $this->expectException(InvalidOptionsException::class);
+        $this->expectExceptionMessage('The "connection" option can only be used with DBAL QueryBuilder');
+
+        DoctrinePaginatorBuilder::countQueryBuilder([
+            'query_builder' => $this->createDefaultQueryBuilderORM(),
+            'connection' => $this->em->getConnection(),
+        ]);
+    }
+
     public function testCountQueryBuilderDBALWithCountByAliasBehaviorWithDistinct(): void
     {
         $queryBuilder = $this->createDefaultQueryBuilderDBAL();
@@ -358,6 +408,7 @@ class DoctrinePaginatorBuilderTest extends AbstractTest
         $count = DoctrinePaginatorBuilder::countQueryBuilder([
             'query_builder' => $queryBuilder,
             'behavior' => 'count_by_sub_request',
+            'connection' => $this->em->getConnection(),
         ]);
 
         $this->assertSame(52, $count);
@@ -368,7 +419,25 @@ class DoctrinePaginatorBuilderTest extends AbstractTest
         $this->checkIfQueryBuildNotChange($queryBuilder);
     }
 
-    public function testCountQueryBuilderDBALWithOrmBehaviorWithSimplifiedRequest(): void
+    public function testCountQueryBuilderDBALWithCountBySelectAllBehavior(): void
+    {
+        $queryBuilder = $this->createDefaultQueryBuilderDBAL();
+        $this->saveQueryBuilder($queryBuilder);
+
+        $count = DoctrinePaginatorBuilder::countQueryBuilder([
+            'query_builder' => $queryBuilder,
+            'behavior' => 'count_by_select_all',
+        ]);
+
+        $this->assertSame(52, $count);
+        $this->assertSame(1, $this->sqlLogger->currentQuery);
+        $this->assertStringContainsStringIgnoringCase('SELECT count(*) FROM', $this->sqlLogger->queries[1]['sql']);
+        $this->assertStringNotContainsStringIgnoringCase('mainquery', $this->sqlLogger->queries[1]['sql']);
+        $this->assertStringNotContainsStringIgnoringCase('ORDER', $this->sqlLogger->queries[1]['sql']);
+        $this->checkIfQueryBuildNotChange($queryBuilder);
+    }
+
+    public function testCountQueryBuilderORMWithOrmBehaviorWithSimplifiedRequest(): void
     {
         $queryBuilder = $this->createDefaultQueryBuilderORM();
         $this->saveQueryBuilder($queryBuilder);
@@ -386,7 +455,7 @@ class DoctrinePaginatorBuilderTest extends AbstractTest
         $this->checkIfQueryBuildNotChange($queryBuilder);
     }
 
-    public function testCountQueryBuilderDBALWithOrmBehaviorWithoutSimplifiedRequest(): void
+    public function testCountQueryBuilderORMWithOrmBehaviorWithoutSimplifiedRequest(): void
     {
         $queryBuilder = $this->createDefaultQueryBuilderORM();
         $this->saveQueryBuilder($queryBuilder);

@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Ecommit\DoctrineUtils\Paginator;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder as QueryBuilderDBAL;
-use Doctrine\DBAL\Result;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\QueryBuilder as QueryBuilderORM;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -26,17 +26,19 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * @phpstan-type CountOptions array{
  *      query_builder: QueryBuilderDBAL|QueryBuilderORM,
- *      behavior?: 'count_by_alias'|'count_by_sub_request'|'orm',
+ *      behavior?: 'count_by_alias'|'count_by_sub_request'|'orm'|'count_by_select_all',
  *      alias?: ?string,
  *      distinct_alias?: ?bool,
- *      simplified_request?: ?bool
+ *      simplified_request?: ?bool,
+ *      connection?: ?Connection
  * }
  * @phpstan-type CountResolvedOptions array{
  *      query_builder: QueryBuilderDBAL|QueryBuilderORM,
- *      behavior: 'count_by_alias'|'count_by_sub_request'|'orm',
+ *      behavior: 'count_by_alias'|'count_by_sub_request'|'orm'|'count_by_select_all',
  *      alias: ?string,
  *      distinct_alias: ?bool,
- *      simplified_request: ?bool
+ *      simplified_request: ?bool,
+ *      connection: ?Connection
  * }
  */
 class DoctrinePaginatorBuilder
@@ -48,11 +50,13 @@ class DoctrinePaginatorBuilder
      *                              * alias [ONLY WITH behavior=count_by_alias]
      *                              * distinct_alias [ONLY WITH behavior=count_by_alias]
      *                              * simplified_request - Remove unnecessary "select" statements [ONLY WITH ORM QUERY BUILDER AND WITH behavior=orm ]
+     *                              * connection [ONLY WITH DBAL QUERY BUILDER]
      *
      *                              Availabled behaviors :
      *                              * count_by_alias: Use alias. Option "alias" is required
      *                              * count_by_sub_request: Use sub request
      *                              * orm: Use Doctrine ORM Paginator [ONLY WITH ORM QUERY BUILDER]
+     *                              * count_by_select_all [ONLY WITH DBAL QUERY BUILDER]
      *
      * @return int<0, max>
      */
@@ -70,12 +74,13 @@ class DoctrinePaginatorBuilder
             'alias' => null,
             'distinct_alias' => null,
             'simplified_request' => null,
+            'connection' => null,
         ]);
         $resolver->setAllowedTypes('query_builder', [QueryBuilderDBAL::class, QueryBuilderORM::class]);
         $resolver->setAllowedTypes('behavior', 'string');
         $resolver->setAllowedValues('behavior', function (string $behavior) use ($options): bool {
             if ($options['query_builder'] instanceof QueryBuilderDBAL) {
-                return \in_array($behavior, ['count_by_alias', 'count_by_sub_request']);
+                return \in_array($behavior, ['count_by_alias', 'count_by_sub_request', 'count_by_select_all']);
             }
 
             return \in_array($behavior, ['count_by_alias', 'count_by_sub_request', 'orm']);
@@ -112,6 +117,16 @@ class DoctrinePaginatorBuilder
             }
 
             return $simplifiedRequest;
+        });
+        $resolver->setAllowedTypes('connection', [Connection::class, 'null']);
+        $resolver->setNormalizer('connection', function (Options $options, ?Connection $connection): ?Connection {
+            if ('count_by_sub_request' === $options['behavior'] && $options['query_builder'] instanceof QueryBuilderDBAL && null === $connection) {
+                throw new MissingOptionsException('When "behavior" option is set to "count_by_sub_request" with DBAL QueryBuilder, "connection" option is required');
+            } elseif (null !== $connection && !($options['query_builder'] instanceof QueryBuilderDBAL)) {
+                throw new InvalidOptionsException('The "connection" option can only be used with DBAL QueryBuilder');
+            }
+
+            return $connection;
         });
         /** @var CountResolvedOptions $options */
         $options = $resolver->resolve($options);
@@ -155,11 +170,22 @@ class DoctrinePaginatorBuilder
 
             $distinct = ($options['distinct_alias']) ? 'DISTINCT ' : '';
             $countQueryBuilder->select(\sprintf('count(%s%s)', $distinct, $options['alias']));
-            $countQueryBuilder->resetQueryPart('orderBy');
-            $result = $countQueryBuilder->execute();
-            if (!$result instanceof Result) {
-                throw new \Exception('Expected class : '.Result::class);
+            $countQueryBuilder->resetOrderBy();
+            $result = $countQueryBuilder->executeQuery();
+            $count = $result->fetchOne();
+            if (false === $count) {
+                throw new \Exception('Mixed result expected');
             }
+            /** @var int<0, max> $count */
+            $count = (int) $count; // @phpstan-ignore-line
+
+            return $count;
+        } elseif ('count_by_select_all' === $options['behavior']) {
+            $countQueryBuilder = clone $queryBuilder;
+
+            $countQueryBuilder->select('count(*)');
+            $countQueryBuilder->resetOrderBy();
+            $result = $countQueryBuilder->executeQuery();
             $count = $result->fetchOne();
             if (false === $count) {
                 throw new \Exception('Mixed result expected');
@@ -171,19 +197,17 @@ class DoctrinePaginatorBuilder
         }
 
         // count_by_sub_request
-        $queryBuilderCount = clone $queryBuilder;
         $queryBuilderClone = clone $queryBuilder;
+        $queryBuilderClone->resetOrderBy();
 
-        $queryBuilderClone->resetQueryPart('orderBy');
-
-        $queryBuilderCount->resetQueryParts(); // Remove Query Parts
+        /** @var Connection $connection */
+        $connection = $options['connection'];
+        $queryBuilderCount = $connection->createQueryBuilder();
         $queryBuilderCount->select('count(*)')
-            ->from('('.$queryBuilderClone->getSql().')', 'mainquery');
-        $result = $queryBuilderCount->execute();
+            ->from('('.$queryBuilderClone->getSql().')', 'mainquery')
+            ->setParameters($queryBuilderClone->getParameters(), $queryBuilderClone->getParameterTypes());
+        $result = $queryBuilderCount->executeQuery();
 
-        if (!$result instanceof Result) {
-            throw new \Exception('Expected class : '.Result::class);
-        }
         $count = $result->fetchOne();
         if (false === $count) {
             throw new \Exception('Mixed result expected');
@@ -248,7 +272,7 @@ class DoctrinePaginatorBuilder
     public static function getDefaultCountBehavior(QueryBuilderDBAL|QueryBuilderORM $queryBuilder): string
     {
         if ($queryBuilder instanceof QueryBuilderDBAL) {
-            return 'count_by_sub_request';
+            return 'count_by_select_all';
         }
 
         return 'orm';

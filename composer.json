@@ -18,12 +18,11 @@
     },
     "require": {
         "php": "^8.0",
-        "doctrine/dbal": "^2.11.0|^3.0",
+        "doctrine/dbal": "^3.8|^4.0",
         "ecommit/paginator": "^1.0",
         "symfony/options-resolver": "^5.4|^6.4|^7.0"
     },
     "require-dev": {
-        "doctrine/annotations": "*",
         "doctrine/orm": "*",
         "friendsofphp/php-cs-fixer": "^3.0",
         "phpstan/phpstan": "^1.9",
@@ -34,14 +33,14 @@
         "doctrine/orm": "Doctrine ORM"
     },
     "conflict": {
-        "doctrine/orm": "<2.12.0 || >=3.0.0"
+        "doctrine/orm": "<2.19.0 || >=4.0.0"
     },
     "config": {
         "sort-packages": true
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.x-dev"
+            "dev-master": "2.x-dev"
         }
     }
 }

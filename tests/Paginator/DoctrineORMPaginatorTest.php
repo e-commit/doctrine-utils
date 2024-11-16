@@ -215,8 +215,8 @@ class DoctrineORMPaginatorTest extends AbstractDoctrinePaginatorTest
         $paginator = $this->createPaginator($options);
 
         $this->assertSame(3, $this->sqlLogger->currentQuery);
-        $this->assertCount(1, $this->sqlLogger->queries[3]['params']);
-        $this->assertEquals(range(6, 10), $this->sqlLogger->queries[3]['params'][0]);
+        $this->assertCount(5, $this->sqlLogger->queries[3]['params']);
+        $this->assertEquals(range(6, 10), \array_slice($this->sqlLogger->queries[3]['params'], 0, 5));
         $this->assertCount(52, $paginator);
         $this->checkEntityIds($paginator, range(6, 10));
         $this->checkIfQueryBuildNotChange($queryBuilder);

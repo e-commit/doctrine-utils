@@ -13,16 +13,20 @@ declare(strict_types=1);
 
 namespace Ecommit\DoctrineUtils\Tests\App;
 
+use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\ORMSetup;
 use Doctrine\ORM\Tools\SchemaTool;
-use Doctrine\ORM\Tools\Setup;
 use Ecommit\DoctrineUtils\Tests\App\Entity\Entity;
 use Ecommit\DoctrineUtils\Tests\App\Entity\Relation;
+use Ecommit\DoctrineUtils\Tests\App\Logging\Middleware;
+use Ecommit\DoctrineUtils\Tests\App\Logging\SqlLogger;
 
 class Doctrine
 {
     protected static ?EntityManagerInterface $entityManager = null;
+    protected static ?SqlLogger $sqlLogger = null;
 
     public static function getEntityManager(): EntityManagerInterface
     {
@@ -30,9 +34,10 @@ class Doctrine
             return static::$entityManager;
         }
 
-        $config = Setup::createAnnotationMetadataConfiguration([__DIR__.'/Entity'], true, null, null, false);
-        $config->setSQLLogger(new SqlLogger());
-        static::$entityManager = EntityManager::create(
+        $config = ORMSetup::createAttributeMetadataConfiguration([__DIR__.'/Entity'], true);
+        $config->setMiddlewares([new Middleware(static::getLogger())]);
+
+        $connection = DriverManager::getConnection(
             [
                 'driver' => 'pdo_sqlite',
                 'memory' => true,
@@ -40,7 +45,20 @@ class Doctrine
             $config
         );
 
+        static::$entityManager = new EntityManager($connection, $config);
+
         return static::$entityManager;
+    }
+
+    public static function getLogger(): SqlLogger
+    {
+        if (static::$sqlLogger) {
+            return static::$sqlLogger;
+        }
+
+        static::$sqlLogger = new SqlLogger();
+
+        return static::$sqlLogger;
     }
 
     public static function createSchema(): void
@@ -77,8 +95,6 @@ class Doctrine
         $em->flush();
         $em->clear();
 
-        /** @var SqlLogger $sqlLogger */
-        $sqlLogger = $em->getConfiguration()->getSQLLogger();
-        $sqlLogger->reset();
+        static::getLogger()->reset();
     }
 }

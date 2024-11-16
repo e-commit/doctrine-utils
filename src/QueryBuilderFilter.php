@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Ecommit\DoctrineUtils;
 
-use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Query\QueryBuilder as QueryBuilderDBAL;
 use Doctrine\ORM\QueryBuilder as QueryBuilderORM;
 
@@ -80,7 +80,7 @@ class QueryBuilderFilter
         $clauseSql = (self::SELECT_IN === $filterSign || self::SELECT_AUTO === $filterSign) ? 'IN' : 'NOT IN';
 
         $queryBuilder->andWhere(\sprintf('%s %s (:%s)', $sqlField, $clauseSql, $paramName));
-        $queryBuilder->setParameter($paramName, $filterValues, Connection::PARAM_STR_ARRAY);
+        $queryBuilder->setParameter($paramName, $filterValues, ArrayParameterType::STRING);
 
         return $queryBuilder;
     }
@@ -103,7 +103,7 @@ class QueryBuilderFilter
         foreach (array_chunk($filterValues, self::MAX_PER_IN) as $filterValuesGroup) {
             ++$groupNumber;
             $groups[] = \sprintf('%s %s (:%s%s)', $sqlField, $clauseSql, $paramName, $groupNumber);
-            $queryBuilder->setParameter($paramName.$groupNumber, $filterValuesGroup, Connection::PARAM_STR_ARRAY);
+            $queryBuilder->setParameter($paramName.$groupNumber, $filterValuesGroup, ArrayParameterType::STRING);
         }
 
         $queryBuilder->andWhere(implode(' '.$separatorClauseSql.' ', $groups));

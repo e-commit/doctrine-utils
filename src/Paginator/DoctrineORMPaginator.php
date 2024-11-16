@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Ecommit\DoctrineUtils\Paginator;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Ecommit\DoctrineUtils\QueryBuilderFilter;
@@ -91,7 +92,7 @@ final class DoctrineORMPaginator extends AbstractDoctrinePaginator
 
         $resultsByIdsQueryBuilder = clone $queryBuilder;
         $resultsByIdsQueryBuilder->resetDQLPart('where');
-        $resultsByIdsQueryBuilder->setParameters([]);
+        $resultsByIdsQueryBuilder->setParameters(new ArrayCollection());
         QueryBuilderFilter::addMultiFilter($resultsByIdsQueryBuilder, QueryBuilderFilter::SELECT_IN, $ids, $byIdentifier, 'paginate_pks');
         $result = $resultsByIdsQueryBuilder->getQuery()->getResult();
         if (!\is_array($result)) {
