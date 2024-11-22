@@ -19,6 +19,9 @@ use Doctrine\DBAL\Driver\Statement as StatementInterface;
 use Doctrine\DBAL\ParameterType;
 use Psr\Log\LoggerInterface;
 
+/**
+ * @legacy Support for doctrine/dbal v3
+ */
 class Statement4 extends AbstractStatementMiddleware
 {
     /** @var array<int,mixed>|array<string,mixed> */
