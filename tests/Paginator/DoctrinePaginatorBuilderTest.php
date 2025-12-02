@@ -16,11 +16,11 @@ namespace Ecommit\DoctrineUtils\Tests\Paginator;
 use Ecommit\DoctrineUtils\Paginator\DoctrineDBALPaginator;
 use Ecommit\DoctrineUtils\Paginator\DoctrineORMPaginator;
 use Ecommit\DoctrineUtils\Paginator\DoctrinePaginatorBuilder;
-use Ecommit\DoctrineUtils\Tests\AbstractTest;
+use Ecommit\DoctrineUtils\Tests\AbstractTestCase;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 
-class DoctrinePaginatorBuilderTest extends AbstractTest
+class DoctrinePaginatorBuilderTest extends AbstractTestCase
 {
     public function testCountQueryBuilderBadQueryBuilder(): void
     {
@@ -48,7 +48,7 @@ class DoctrinePaginatorBuilderTest extends AbstractTest
         ]);
     }
 
-    public function getTestCountQueryBuilderDBALBadBehaviorProvider(): array
+    public static function getTestCountQueryBuilderDBALBadBehaviorProvider(): array
     {
         return [
             ['bad'],
@@ -71,7 +71,7 @@ class DoctrinePaginatorBuilderTest extends AbstractTest
         ]);
     }
 
-    public function getTestCountQueryBuilderORMBadBehaviorProvider(): array
+    public static function getTestCountQueryBuilderORMBadBehaviorProvider(): array
     {
         return [
             ['bad'],
@@ -178,7 +178,7 @@ class DoctrinePaginatorBuilderTest extends AbstractTest
         ]);
     }
 
-    public function getTestCountQueryBuilderORMAliasOptionNotAllowedProvider(): array
+    public static function getTestCountQueryBuilderORMAliasOptionNotAllowedProvider(): array
     {
         return [
             ['count_by_sub_request'],
@@ -319,7 +319,7 @@ class DoctrinePaginatorBuilderTest extends AbstractTest
         ]);
     }
 
-    public function getTestCountQueryBuilderORMSimplifiedRequestOptionNotAllowedProvider(): array
+    public static function getTestCountQueryBuilderORMSimplifiedRequestOptionNotAllowedProvider(): array
     {
         return [
             ['count_by_alias'],

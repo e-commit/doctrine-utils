@@ -21,7 +21,7 @@ use Ecommit\DoctrineUtils\Tests\App\Entity\Entity;
 use Ecommit\DoctrineUtils\Tests\App\Logging\SqlLogger;
 use PHPUnit\Framework\TestCase;
 
-abstract class AbstractTest extends TestCase
+abstract class AbstractTestCase extends TestCase
 {
     protected EntityManagerInterface $em;
     protected SqlLogger $sqlLogger;

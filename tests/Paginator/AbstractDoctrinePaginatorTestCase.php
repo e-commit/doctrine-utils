@@ -18,7 +18,7 @@ use Doctrine\ORM\QueryBuilder as QueryBuilderORM;
 use Ecommit\DoctrineUtils\Paginator\AbstractDoctrinePaginator;
 use Ecommit\DoctrineUtils\Paginator\DoctrineDBALPaginator;
 use Ecommit\DoctrineUtils\Paginator\DoctrineORMPaginator;
-use Ecommit\DoctrineUtils\Tests\AbstractTest;
+use Ecommit\DoctrineUtils\Tests\AbstractTestCase;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 
@@ -31,7 +31,7 @@ use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
  *
  * @template TOptions of array<string ,mixed>
  */
-abstract class AbstractDoctrinePaginatorTest extends AbstractTest
+abstract class AbstractDoctrinePaginatorTestCase extends AbstractTestCase
 {
     /**
      * @return TQueryBuilder
@@ -134,7 +134,7 @@ abstract class AbstractDoctrinePaginatorTest extends AbstractTest
         $this->checkIfQueryBuildNotChange($queryBuilder);
     }
 
-    public function getTestCountProvider(): array
+    public static function getTestCountProvider(): array
     {
         $queryBuilderUpdaterNoData = function (QueryBuilderDBAL|QueryBuilderORM $queryBuilder): void {
             $queryBuilder->andWhere('0 = 1');
@@ -214,7 +214,7 @@ abstract class AbstractDoctrinePaginatorTest extends AbstractTest
         $this->checkIfQueryBuildNotChange($queryBuilder);
     }
 
-    public function getTestItereatorWithoutIdentiferOptionProvider(): array
+    public static function getTestItereatorWithoutIdentiferOptionProvider(): array
     {
         return [
             [1, 5, range(1, 5), '/LIMIT 5$/'],

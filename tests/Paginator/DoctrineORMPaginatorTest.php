@@ -23,9 +23,9 @@ use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
  * @phpstan-import-type PaginatorOptions from DoctrineORMPaginator
  * @phpstan-import-type CountOptions from DoctrinePaginatorBuilder
  *
- * @template-extends AbstractDoctrinePaginatorTest<QueryBuilderORM, DoctrineORMPaginator, mixed, mixed, PaginatorOptions>
+ * @template-extends AbstractDoctrinePaginatorTestCase<QueryBuilderORM, DoctrineORMPaginator, mixed, mixed, PaginatorOptions>
  */
-class DoctrineORMPaginatorTest extends AbstractDoctrinePaginatorTest
+class DoctrineORMPaginatorTest extends AbstractDoctrinePaginatorTestCase
 {
     /**
      * @dataProvider getTestCopySimplifiedRequestToCountOptionProvider
@@ -45,7 +45,7 @@ class DoctrineORMPaginatorTest extends AbstractDoctrinePaginatorTest
         $this->assertSame($countOptionsExpected, $paginator->getOption('count'));
     }
 
-    public function getTestCopySimplifiedRequestToCountOptionProvider(): array
+    public static function getTestCopySimplifiedRequestToCountOptionProvider(): array
     {
         return [
             [['count' => 8], 8], // With int options

@@ -16,7 +16,7 @@ namespace Ecommit\DoctrineUtils\Tests;
 use Doctrine\DBAL\Result;
 use Ecommit\DoctrineUtils\QueryBuilderFilter;
 
-class QueryBuilderFilterTest extends AbstractTest
+class QueryBuilderFilterTest extends AbstractTestCase
 {
     public function testAddMultiFilterBadFilterSignDBAL(): void
     {
@@ -71,7 +71,7 @@ class QueryBuilderFilterTest extends AbstractTest
         $this->assertCount($expectedCountParameters, $this->sqlLogger->queries[1]['params']);
     }
 
-    public function getTestAddMultiFilterProvider(): array
+    public static function getTestAddMultiFilterProvider(): array
     {
         $bigValues = array_merge(
             range(10, 1100),
@@ -178,7 +178,7 @@ class QueryBuilderFilterTest extends AbstractTest
         $this->assertSame(1, $this->sqlLogger->currentQuery);
     }
 
-    public function getTestAddMultiFilterWithRestrictValuesProvider(): array
+    public static function getTestAddMultiFilterWithRestrictValuesProvider(): array
     {
         return [
             // IN - WITHOUT VALUES
@@ -334,7 +334,7 @@ class QueryBuilderFilterTest extends AbstractTest
         $this->assertCount($expectedCountParameters, $this->sqlLogger->queries[1]['params']);
     }
 
-    public function getTestAddEqualFilterProvider(): array
+    public static function getTestAddEqualFilterProvider(): array
     {
         return [
             // EQUAL - TRUE
@@ -386,7 +386,7 @@ class QueryBuilderFilterTest extends AbstractTest
         $this->assertCount($expectedCountParameters, $this->sqlLogger->queries[1]['params']);
     }
 
-    public function getTestAddComparatorFilterProvider(): array
+    public static function getTestAddComparatorFilterProvider(): array
     {
         return [
             ['>', 1, range(2, 52), 2],
@@ -427,7 +427,7 @@ class QueryBuilderFilterTest extends AbstractTest
         $this->assertCount($expectedCountParameters, $this->sqlLogger->queries[1]['params']);
     }
 
-    public function getTestAddContainFilterProvider(): array
+    public static function getTestAddContainFilterProvider(): array
     {
         return [
             // CONTAIN - TRUE

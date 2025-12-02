@@ -20,9 +20,9 @@ use Ecommit\DoctrineUtils\Paginator\DoctrineDBALPaginator;
 /**
  * @phpstan-import-type PaginatorOptions from DoctrineDBALPaginator
  *
- * @template-extends AbstractDoctrinePaginatorTest<QueryBuilderDBAL, DoctrineDBALPaginator, mixed, mixed, PaginatorOptions>
+ * @template-extends AbstractDoctrinePaginatorTestCase<QueryBuilderDBAL, DoctrineDBALPaginator, mixed, mixed, PaginatorOptions>
  */
-class DoctrineDBALPaginatorTest extends AbstractDoctrinePaginatorTest
+class DoctrineDBALPaginatorTest extends AbstractDoctrinePaginatorTestCase
 {
     public function testWithByIdentifierOption(): void
     {
